@@ -4,9 +4,36 @@ $bodyClass = 'site-page course-detail-page';
 $navActive = 'courses';
 $stylesheets = ['/public/css/home.css', '/public/css/course_detail.css'];
 require __DIR__ . '/../includes/header.php';
+
+// Hiển thị thông báo
+$success = $_SESSION['success'] ?? null;
+$error = $_SESSION['error'] ?? null;
+$warning = $_SESSION['warning'] ?? null;
+unset($_SESSION['success'], $_SESSION['error'], $_SESSION['warning']);
 ?>
 
 <main class="cd-main">
+    <?php if ($success): ?>
+    <div class="cd-notification cd-notification--success">
+        <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+        <?= htmlspecialchars($success) ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($error): ?>
+    <div class="cd-notification cd-notification--error">
+        <span class="material-symbols-outlined" aria-hidden="true">error</span>
+        <?= htmlspecialchars($error) ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($warning): ?>
+    <div class="cd-notification cd-notification--warning">
+        <span class="material-symbols-outlined" aria-hidden="true">warning</span>
+        <?= htmlspecialchars($warning) ?>
+    </div>
+    <?php endif; ?>
+
     <nav class="cd-breadcrumb" aria-label="Breadcrumb">
         <a href="<?= htmlspecialchars(BASE_URL) ?>/">Home</a>
         <span class="material-symbols-outlined cd-breadcrumb__sep" aria-hidden="true">chevron_right</span>
@@ -70,10 +97,59 @@ require __DIR__ . '/../includes/header.php';
                 <div class="cd-purchase__price-row">
                     <span class="cd-purchase__price">$<?= number_format($course['price'] ?? 0, 2) ?></span>
                 </div>
-                <div class="cd-purchase__actions">
-                    <button type="button" class="cd-btn cd-btn--primary">Enroll Now</button>
-                    <button type="button" class="cd-btn cd-btn--outline">Add to Cart</button>
+
+                <?php if ($is_enrolled): ?>
+                <div class="cd-enrolled-badge">
+                    <span class="material-symbols-outlined" aria-hidden="true">verified</span>
+                    Bạn đã sở hữu khóa học này
                 </div>
+                <a href="<?= htmlspecialchars(BASE_URL) ?>/user/my-courses" class="cd-btn cd-btn--primary cd-btn--full">
+                    <span class="material-symbols-outlined" aria-hidden="true">play_circle</span>
+                    Học ngay
+                </a>
+                <?php elseif ($is_logged_in): ?>
+                <div class="cd-purchase__actions">
+                    <form method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/courses/enroll">
+                        <input type="hidden" name="course_id" value="<?= (int) $course['course_id'] ?>">
+                        <button type="submit" class="cd-btn cd-btn--primary cd-btn--full">
+                            <span class="material-symbols-outlined" aria-hidden="true">school</span>
+                            Enroll Now
+                        </button>
+                    </form>
+
+                    <?php if ($is_in_cart): ?>
+                    <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/cart" class="cd-btn cd-btn--outline cd-btn--full">
+                        <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                        Xem giỏ hàng
+                    </a>
+                    <?php else: ?>
+                    <form method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/courses/addToCart">
+                        <input type="hidden" name="course_id" value="<?= (int) $course['course_id'] ?>">
+                        <button type="submit" class="cd-btn cd-btn--outline cd-btn--full">
+                            <span class="material-symbols-outlined" aria-hidden="true">add_shopping_cart</span>
+                            Add to Cart
+                        </button>
+                    </form>
+                    <?php endif; ?>
+                </div>
+                <?php else: ?>
+                <div class="cd-purchase__actions">
+                    <a href="<?= htmlspecialchars(BASE_URL) ?>/auth/login" class="cd-btn cd-btn--primary cd-btn--full">
+                        <span class="material-symbols-outlined" aria-hidden="true">login</span>
+                        Đăng nhập để đăng ký
+                    </a>
+                    <?php if (!$is_in_cart): ?>
+                    <form method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/courses/addToCart">
+                        <input type="hidden" name="course_id" value="<?= (int) $course['course_id'] ?>">
+                        <button type="submit" class="cd-btn cd-btn--outline cd-btn--full">
+                            <span class="material-symbols-outlined" aria-hidden="true">add_shopping_cart</span>
+                            Add to Cart
+                        </button>
+                    </form>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+
                 <div class="cd-purchase__highlights">
                     <p class="cd-purchase__highlights-title">Course Highlights:</p>
                     <ul class="cd-purchase__list">

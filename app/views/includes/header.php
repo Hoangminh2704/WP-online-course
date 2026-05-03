@@ -15,6 +15,9 @@ $stylesheets = $stylesheets ?? ['/public/css/home.css'];
 $isLoggedIn = isset($_SESSION['user_id']);
 $userName = $_SESSION['user_name'] ?? '';
 $userRole = $_SESSION['user_role'] ?? '';
+
+// Cart count
+$cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -53,34 +56,48 @@ $userRole = $_SESSION['user_role'] ?? '';
             <div class="home-nav__actions">
                 <?php if ($isLoggedIn): ?>
                     <div class="home-nav__user">
-                        <button class="home-nav__user-btn" id="user-menu-btn" aria-expanded="false" aria-haspopup="true">
-                            <span class="material-symbols-outlined home-nav__user-icon" aria-hidden="true">account_circle</span>
-                            <span class="home-nav__user-name"><?= htmlspecialchars($userName) ?></span>
-                            <span class="material-symbols-outlined home-nav__user-arrow" aria-hidden="true">expand_more</span>
-                        </button>
-                        <div class="home-nav__user-dropdown" id="user-dropdown" hidden>
-                            <?php if ($userRole === 'admin'): ?>
-                                <a href="<?= htmlspecialchars(BASE_URL) ?>/admin" class="home-nav__dropdown-item">
-                                    <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
-                                    Admin Dashboard
+                        <div class="home-nav__user-left">
+                            <button class="home-nav__user-btn" id="user-menu-btn" aria-expanded="false" aria-haspopup="true">
+                                <span class="material-symbols-outlined home-nav__user-icon" aria-hidden="true">account_circle</span>
+                                <span class="home-nav__user-name"><?= htmlspecialchars($userName) ?></span>
+                                <span class="material-symbols-outlined home-nav__user-arrow" aria-hidden="true">expand_more</span>
+                            </button>
+                            <div class="home-nav__user-dropdown" id="user-dropdown" hidden>
+                                <?php if ($userRole === 'admin'): ?>
+                                    <a href="<?= htmlspecialchars(BASE_URL) ?>/admin" class="home-nav__dropdown-item">
+                                        <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
+                                        Admin Dashboard
+                                    </a>
+                                <?php endif; ?>
+                                <a href="<?= htmlspecialchars(BASE_URL) ?>/user/profile" class="home-nav__dropdown-item">
+                                    <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                                    My Profile
                                 </a>
-                            <?php endif; ?>
-                            <a href="<?= htmlspecialchars(BASE_URL) ?>/user/profile" class="home-nav__dropdown-item">
-                                <span class="material-symbols-outlined" aria-hidden="true">person</span>
-                                My Profile
-                            </a>
-                            <a href="<?= htmlspecialchars(BASE_URL) ?>/user/my-courses" class="home-nav__dropdown-item">
-                                <span class="material-symbols-outlined" aria-hidden="true">school</span>
-                                My Courses
-                            </a>
-                            <div class="home-nav__dropdown-divider"></div>
-                            <a href="<?= htmlspecialchars(BASE_URL) ?>/auth/logout" class="home-nav__dropdown-item home-nav__dropdown-item--danger">
-                                <span class="material-symbols-outlined" aria-hidden="true">logout</span>
-                                Sign Out
-                            </a>
+                                <a href="<?= htmlspecialchars(BASE_URL) ?>/user/my-courses" class="home-nav__dropdown-item">
+                                    <span class="material-symbols-outlined" aria-hidden="true">school</span>
+                                    My Courses
+                                </a>
+                                <div class="home-nav__dropdown-divider"></div>
+                                <a href="<?= htmlspecialchars(BASE_URL) ?>/auth/logout" class="home-nav__dropdown-item home-nav__dropdown-item--danger">
+                                    <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+                                    Sign Out
+                                </a>
+                            </div>
                         </div>
+                        <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/cart" class="home-nav__cart-btn" aria-label="Giỏ hàng">
+                            <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                            <?php if ($cartCount > 0): ?>
+                            <span class="home-nav__cart-badge"><?= $cartCount ?></span>
+                            <?php endif; ?>
+                        </a>
                     </div>
                 <?php else: ?>
+                    <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/cart" class="home-nav__cart-btn" aria-label="Giỏ hàng">
+                        <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                        <?php if ($cartCount > 0): ?>
+                        <span class="home-nav__cart-badge"><?= $cartCount ?></span>
+                        <?php endif; ?>
+                    </a>
                     <a href="<?= htmlspecialchars(BASE_URL) ?>/auth/login" class="home-nav__btn home-nav__btn--ghost">Login</a>
                     <a href="<?= htmlspecialchars(BASE_URL) ?>/auth/register" class="home-nav__btn home-nav__btn--primary">Register</a>
                 <?php endif; ?>

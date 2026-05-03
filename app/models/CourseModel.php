@@ -27,4 +27,11 @@ class CourseModel {
 
         return $this->db->single();
     }
+
+    // Lấy khóa học theo ID
+    public function getCourseById($id) {
+        $this->db->query("SELECT * FROM courses WHERE course_id = ?");
+        $this->db->bind(1, (int) $id, PDO::PARAM_INT);
+        return $this->db->single();
+    }
 }
