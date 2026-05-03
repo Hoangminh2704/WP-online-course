@@ -27,8 +27,8 @@ $pageTitle = $data['title'] ?? 'Login';
             </div>
         <?php endif; ?>
 
-        <form class="auth-form" method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/auth/login" novalidate>
-            <div class="form-group <?= isset($data['errors']['email']) ? 'form-group--error' : '' ?>">
+        <form class="auth-form" id="loginForm" method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/auth/login" novalidate>
+            <div class="form-group" id="group-email">
                 <label class="form-label" for="email">Email</label>
                 <input 
                     type="email" 
@@ -39,13 +39,14 @@ $pageTitle = $data['title'] ?? 'Login';
                     placeholder="student@edustream.test"
                     autocomplete="email"
                     required
+                    minlength="5"
+                    maxlength="255"
+                    pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
                 >
-                <?php if (!empty($data['errors']['email'])): ?>
-                    <span class="form-error"><?= htmlspecialchars($data['errors']['email']) ?></span>
-                <?php endif; ?>
+                <span class="form-error" id="error-email"></span>
             </div>
 
-            <div class="form-group <?= isset($data['errors']['password']) ? 'form-group--error' : '' ?>">
+            <div class="form-group" id="group-password">
                 <label class="form-label" for="password">Password</label>
                 <input 
                     type="password" 
@@ -55,10 +56,10 @@ $pageTitle = $data['title'] ?? 'Login';
                     placeholder="Enter your password"
                     autocomplete="current-password"
                     required
+                    minlength="1"
+                    maxlength="128"
                 >
-                <?php if (!empty($data['errors']['password'])): ?>
-                    <span class="form-error"><?= htmlspecialchars($data['errors']['password']) ?></span>
-                <?php endif; ?>
+                <span class="form-error" id="error-password"></span>
             </div>
 
             <button type="submit" class="auth-btn auth-btn--primary">
@@ -88,6 +89,104 @@ $pageTitle = $data['title'] ?? 'Login';
         </div>
     </div>
 </main>
+
+<script>
+(function() {
+    'use strict';
+
+    var form = document.getElementById('loginForm');
+    if (!form) return;
+
+    function showError(fieldId, message) {
+        var group = document.getElementById('group-' + fieldId);
+        var error = document.getElementById('error-' + fieldId);
+        var input = document.getElementById(fieldId);
+        if (group) group.classList.add('form-group--error');
+        if (error) error.textContent = message;
+        if (input) input.classList.add('form-input--error');
+    }
+
+    function clearError(fieldId) {
+        var group = document.getElementById('group-' + fieldId);
+        var error = document.getElementById('error-' + fieldId);
+        var input = document.getElementById(fieldId);
+        if (group) group.classList.remove('form-group--error');
+        if (error) error.textContent = '';
+        if (input) input.classList.remove('form-input--error');
+    }
+
+    function clearAllErrors() {
+        ['email', 'password'].forEach(function(field) {
+            clearError(field);
+        });
+    }
+
+    function validateEmail(email) {
+        var re = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+        return re.test(email);
+    }
+
+    function validate() {
+        clearAllErrors();
+        var isValid = true;
+
+        var email = document.getElementById('email');
+        var password = document.getElementById('password');
+
+        // Email validation
+        if (!email.value.trim()) {
+            showError('email', 'Email is required.');
+            isValid = false;
+        } else if (!validateEmail(email.value.trim())) {
+            showError('email', 'Please enter a valid email address.');
+            isValid = false;
+        }
+
+        // Password validation
+        if (!password.value) {
+            showError('password', 'Password is required.');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Real-time validation on blur
+    ['email', 'password'].forEach(function(fieldId) {
+        var input = document.getElementById(fieldId);
+        if (input) {
+            input.addEventListener('blur', function() {
+                clearError(fieldId);
+                
+                if (fieldId === 'email') {
+                    if (!input.value.trim()) {
+                        showError('email', 'Email is required.');
+                    } else if (!validateEmail(input.value.trim())) {
+                        showError('email', 'Please enter a valid email address.');
+                    }
+                }
+                
+                if (fieldId === 'password') {
+                    if (!input.value) {
+                        showError('password', 'Password is required.');
+                    }
+                }
+            });
+
+            // Clear error on input
+            input.addEventListener('input', function() {
+                clearError(fieldId);
+            });
+        }
+    });
+
+    form.addEventListener('submit', function(e) {
+        if (!validate()) {
+            e.preventDefault();
+        }
+    });
+})();
+</script>
 
 </body>
 </html>

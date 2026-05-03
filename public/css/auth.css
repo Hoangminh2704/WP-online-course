@@ -160,6 +160,17 @@
     color: var(--auth-error);
 }
 
+.form-hint {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.8125rem;
+    color: var(--auth-text-secondary);
+    margin-top: 0.25rem;
+}
+
+.form-input--error {
+    border-color: var(--auth-error) !important;
+}
+
 /* ==========================================================================
    Button
    ========================================================================== */

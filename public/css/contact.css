@@ -1,0 +1,275 @@
+/* ==========================================================================
+   Contact Page
+   ========================================================================== */
+
+.contact-main {
+    padding: calc(var(--nav-height) + 2rem) 1rem 4rem;
+    min-height: calc(100vh - var(--nav-height));
+    background-color: var(--color-page-bg);
+}
+
+.contact-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.contact-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.contact-title {
+    font-family: "Lexend", system-ui, sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-on-surface);
+    margin: 0 0 1rem 0;
+}
+
+.contact-subtitle {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 1.125rem;
+    color: var(--color-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   Contact Layout
+   ========================================================================== */
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .contact-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Contact Info Card
+   ========================================================================== */
+
+.contact-info-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: calc(var(--nav-height) + 1rem);
+}
+
+.contact-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-outline-variant);
+}
+
+.contact-info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.contact-info-item:first-child {
+    padding-top: 0;
+}
+
+.contact-info-item .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.contact-info-item h3 {
+    font-family: "Lexend", system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    margin: 0 0 0.25rem 0;
+}
+
+.contact-info-item p {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.9375rem;
+    color: var(--color-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   Contact Form
+   ========================================================================== */
+
+.contact-form-wrapper {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-family: "Lexend", system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-on-surface);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 1rem;
+    color: var(--color-on-surface);
+    background-color: #ffffff;
+    border: 1.5px solid var(--color-outline-variant);
+    border-radius: 10px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 89, 187, 0.1);
+}
+
+.form-input::placeholder {
+    color: var(--color-outline);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 150px;
+    line-height: 1.6;
+}
+
+.form-group--error .form-input {
+    border-color: #dc2626;
+    background-color: #fef2f2;
+}
+
+.form-group--error .form-input:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-error {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.form-char-count {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.75rem;
+    color: var(--color-secondary);
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   Alerts
+   ========================================================================== */
+
+.contact-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.contact-alert .material-symbols-outlined {
+    font-size: 1.25rem;
+}
+
+.contact-alert--success {
+    background-color: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.contact-alert--error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+/* ==========================================================================
+   Submit Button
+   ========================================================================== */
+
+.contact-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem 2rem;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-family: "Lexend", system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.contact-btn:hover {
+    background-color: var(--color-primary-hover, #004494);
+}
+
+.contact-btn:active {
+    transform: scale(0.98);
+}
+
+.contact-btn .material-symbols-outlined {
+    font-size: 1.25rem;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 600px) {
+    .contact-title {
+        font-size: 2rem;
+    }
+    
+    .contact-subtitle {
+        font-size: 1rem;
+    }
+    
+    .contact-form-wrapper {
+        padding: 1.5rem;
+    }
+}
