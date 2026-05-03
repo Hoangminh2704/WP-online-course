@@ -75,7 +75,7 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
                                 </a>
                                 <a href="<?= htmlspecialchars(BASE_URL) ?>/user/my-courses" class="home-nav__dropdown-item">
                                     <span class="material-symbols-outlined" aria-hidden="true">school</span>
-                                    My Courses
+                                    Khóa học của tôi
                                 </a>
                                 <div class="home-nav__dropdown-divider"></div>
                                 <a href="<?= htmlspecialchars(BASE_URL) ?>/auth/logout" class="home-nav__dropdown-item home-nav__dropdown-item--danger">

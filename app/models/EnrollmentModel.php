@@ -33,7 +33,7 @@ class EnrollmentModel {
      */
     public function getEnrollmentsByUser($userId) {
         $this->db->query("
-            SELECT e.*, c.title, c.image_url, c.price, c.instructor
+            SELECT e.enrolled_at, c.course_id, c.title, c.slug, c.image_url, c.price, c.instructor, c.rating
             FROM enrollments e
             JOIN courses c ON e.course_id = c.course_id
             WHERE e.user_id = ?
