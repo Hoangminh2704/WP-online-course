@@ -22,7 +22,7 @@ class UserController extends Controller {
         $courses = $enrollmentModel->getEnrollmentsByUser($_SESSION['user_id']);
 
         $data = [
-            'title' => 'Khóa học của tôi - EduStream',
+            'title' => 'My Courses - EduStream',
             'courses' => $courses,
             'user_name' => $_SESSION['user_name'] ?? 'User',
             'total_courses' => count($courses)
@@ -49,7 +49,7 @@ class UserController extends Controller {
         $user = $userModel->findById($_SESSION['user_id']);
 
         $data = [
-            'title' => 'Hồ sơ cá nhân - EduStream',
+            'title' => 'My Profile - EduStream',
             'user' => $user
         ];
 

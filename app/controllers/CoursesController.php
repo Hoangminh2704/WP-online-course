@@ -9,7 +9,7 @@ class CoursesController extends Controller {
         $courses = $courseModel->getAllCourses();
 
         $data = [
-            'title' => 'Danh sách Khóa học - EduStream',
+            'title' => 'Course Catalog - EduStream',
             'courses' => $courses
         ];
 
@@ -30,7 +30,7 @@ class CoursesController extends Controller {
 
         if (!$course) {
             http_response_code(404);
-            die("Khóa học không tồn tại!");
+            die("Course not found!");
         }
 
         // Lấy trạng thái enrollment và cart
@@ -75,7 +75,7 @@ class CoursesController extends Controller {
         $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
 
         if ($courseId <= 0) {
-            $_SESSION['error'] = 'Khóa học không hợp lệ.';
+            $_SESSION['error'] = 'Invalid course.';
             header('Location: ' . BASE_URL . '/courses');
             exit;
         }
@@ -83,34 +83,30 @@ class CoursesController extends Controller {
         $enrollmentModel = $this->model('EnrollmentModel');
         $courseModel = $this->model('CourseModel');
 
-        // Lấy slug để redirect về lại trang course
         $course = $courseModel->getCourseById($courseId);
         if (!$course) {
-            $_SESSION['error'] = 'Khóa học không tồn tại.';
+            $_SESSION['error'] = 'Course not found.';
             header('Location: ' . BASE_URL . '/courses');
             exit;
         }
 
-        // Kiểm tra đã đăng ký chưa
         if ($enrollmentModel->isEnrolled($_SESSION['user_id'], $courseId)) {
-            $_SESSION['error'] = 'Bạn đã sở hữu khóa học này rồi!';
+            $_SESSION['error'] = 'You already own this course!';
             header('Location: ' . BASE_URL . '/courses/detail/' . $course['slug']);
             exit;
         }
 
-        // Đăng ký khóa học
         try {
             $enrollmentModel->enroll($_SESSION['user_id'], $courseId);
 
-            // Xóa khỏi giỏ hàng nếu có
             $cartModel = $this->model('CartModel');
             $cartModel->removeFromCart($courseId);
 
-            $_SESSION['success'] = 'Đăng ký khóa học thành công! Chúc mừng bạn đã sở hữu khóa học "' . $course['title'] . '".';
+            $_SESSION['success'] = 'Successfully enrolled in "' . $course['title'] . '"! Congratulations on your new course.';
             header('Location: ' . BASE_URL . '/courses/detail/' . $course['slug']);
             exit;
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Có lỗi xảy ra. Vui lòng thử lại.';
+            $_SESSION['error'] = 'An error occurred. Please try again.';
             header('Location: ' . BASE_URL . '/courses/detail/' . $course['slug']);
             exit;
         }
@@ -128,25 +124,23 @@ class CoursesController extends Controller {
         $courseId = isset($_POST['course_id']) ? (int) $_POST['course_id'] : 0;
 
         if ($courseId <= 0) {
-            $_SESSION['error'] = 'Khóa học không hợp lệ.';
+            $_SESSION['error'] = 'Invalid course.';
             header('Location: ' . $_SERVER['HTTP_REFERER'] ?? BASE_URL . '/courses');
             exit;
         }
 
-        // Kiểm tra khóa học có tồn tại không
         $courseModel = $this->model('CourseModel');
         $course = $courseModel->getCourseById($courseId);
         if (!$course) {
-            $_SESSION['error'] = 'Khóa học không tồn tại.';
-            header('Location: BASE_URL' . '/courses');
+            $_SESSION['error'] = 'Course not found.';
+            header('Location: ' . BASE_URL . '/courses');
             exit;
         }
 
-        // Kiểm tra đã đăng ký chưa
         if (isset($_SESSION['user_id'])) {
             $enrollmentModel = $this->model('EnrollmentModel');
             if ($enrollmentModel->isEnrolled($_SESSION['user_id'], $courseId)) {
-                $_SESSION['error'] = 'Bạn đã sở hữu khóa học này rồi, không cần thêm vào giỏ hàng.';
+                $_SESSION['error'] = 'You already own this course, no need to add it to cart.';
                 header('Location: ' . BASE_URL . '/courses/detail/' . $course['slug']);
                 exit;
             }
@@ -154,12 +148,11 @@ class CoursesController extends Controller {
 
         $cartModel = $this->model('CartModel');
 
-        // Kiểm tra đã trong giỏ chưa
         if ($cartModel->isInCart($courseId)) {
-            $_SESSION['warning'] = 'Khóa học này đã có trong giỏ hàng của bạn.';
+            $_SESSION['warning'] = 'This course is already in your cart.';
         } else {
             $cartModel->addToCart($courseId);
-            $_SESSION['success'] = 'Đã thêm "' . $course['title'] . '" vào giỏ hàng!';
+            $_SESSION['success'] = '"' . $course['title'] . '" has been added to your cart!';
         }
 
         header('Location: ' . BASE_URL . '/courses/detail/' . $course['slug']);
@@ -179,7 +172,7 @@ class CoursesController extends Controller {
         }
 
         $data = [
-            'title' => 'Giỏ hàng - EduStream',
+            'title' => 'Shopping Cart - EduStream',
             'courses' => $courses,
             'total' => $total,
             'count' => count($courses)
@@ -202,7 +195,7 @@ class CoursesController extends Controller {
         if ($courseId > 0) {
             $cartModel = $this->model('CartModel');
             $cartModel->removeFromCart($courseId);
-            $_SESSION['success'] = 'Đã xóa khóa học khỏi giỏ hàng.';
+            $_SESSION['success'] = 'Course removed from your cart.';
         }
 
         header('Location: ' . BASE_URL . '/courses/cart');
@@ -210,7 +203,7 @@ class CoursesController extends Controller {
     }
 
     /**
-     * Checkout - Mua tất cả trong giỏ hàng
+     * Checkout - Enroll in all courses in the cart
      */
     public function checkout() {
         if (!isset($_SESSION['user_id'])) {
@@ -223,7 +216,7 @@ class CoursesController extends Controller {
         $courses = $cartModel->getCartWithDetails();
 
         if (empty($courses)) {
-            $_SESSION['error'] = 'Giỏ hàng trống.';
+            $_SESSION['error'] = 'Your cart is empty.';
             header('Location: ' . BASE_URL . '/courses/cart');
             exit;
         }
@@ -232,17 +225,15 @@ class CoursesController extends Controller {
         $count = 0;
 
         foreach ($courses as $course) {
-            // Chỉ enroll nếu chưa có
             if (!$enrollmentModel->isEnrolled($_SESSION['user_id'], $course['course_id'])) {
                 $enrollmentModel->enroll($_SESSION['user_id'], $course['course_id']);
                 $count++;
             }
         }
 
-        // Xóa giỏ hàng sau khi checkout
         $cartModel->clearCart();
 
-        $_SESSION['success'] = "Đã đăng ký thành công $count khóa học! Chúc mừng bạn.";
+        $_SESSION['success'] = "Successfully enrolled in $count course" . ($count != 1 ? "s" : "") . "! Congratulations!";
         header('Location: ' . BASE_URL . '/user/my-courses');
         exit;
     }

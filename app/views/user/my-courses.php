@@ -1,5 +1,5 @@
 <?php
-$pageTitle = $data['title'] ?? 'Khóa học của tôi';
+$pageTitle = $data['title'] ?? 'My Courses';
 $bodyClass = 'site-page my-courses-page';
 $navActive = 'courses';
 $stylesheets = ['/public/css/home.css', '/public/css/my-courses.css'];
@@ -12,27 +12,27 @@ require __DIR__ . '/../includes/header.php';
             <div class="mc-header__info">
                 <h1 class="mc-title">
                     <span class="material-symbols-outlined" aria-hidden="true">school</span>
-                    Khóa học của tôi
+                    My Courses
                 </h1>
                 <p class="mc-subtitle">
-                    Xin chào, <strong><?= htmlspecialchars($data['user_name']) ?></strong>! 
-                    Bạn đang sở hữu <strong><?= $data['total_courses'] ?></strong> khóa học.
+                    Hello, <strong><?= htmlspecialchars($data['user_name']) ?></strong>!
+                    You own <strong><?= $data['total_courses'] ?></strong> course<?= $data['total_courses'] != 1 ? 's' : '' ?>.
                 </p>
             </div>
             <a href="<?= htmlspecialchars(BASE_URL) ?>/courses" class="mc-browse-btn">
                 <span class="material-symbols-outlined" aria-hidden="true">add</span>
-                Khám phá thêm khóa học
+                Explore More Courses
             </a>
         </div>
 
         <?php if (empty($data['courses'])): ?>
         <div class="mc-empty">
             <span class="material-symbols-outlined mc-empty__icon" aria-hidden="true">menu_book</span>
-            <h2 class="mc-empty__title">Chưa có khóa học nào</h2>
-            <p class="mc-empty__text">Bạn chưa đăng ký khóa học nào. Hãy khám phá và bắt đầu học ngay!</p>
+            <h2 class="mc-empty__title">No Courses Yet</h2>
+            <p class="mc-empty__text">You haven't enrolled in any courses yet. Start exploring and begin learning today!</p>
             <a href="<?= htmlspecialchars(BASE_URL) ?>/courses" class="mc-empty__btn">
                 <span class="material-symbols-outlined" aria-hidden="true">explore</span>
-                Khám phá khóa học
+                Explore Courses
             </a>
         </div>
         <?php else: ?>
@@ -46,7 +46,7 @@ require __DIR__ . '/../includes/header.php';
                     <div class="mc-card__overlay">
                         <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/detail/<?= htmlspecialchars($course['slug']) ?>" class="mc-card__learn-btn">
                             <span class="material-symbols-outlined" aria-hidden="true">play_circle</span>
-                            Tiếp tục học
+                            Continue Learning
                         </a>
                     </div>
                 </div>
@@ -67,7 +67,7 @@ require __DIR__ . '/../includes/header.php';
                         </div>
                         <div class="mc-card__enrolled">
                             <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
-                            <span>Đã đăng ký: <?= date('d/m/Y', strtotime($course['enrolled_at'])) ?></span>
+                            <span>Enrolled: <?= date('M d, Y', strtotime($course['enrolled_at'])) ?></span>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,830 @@
+% ==============================================================================
+%  EDUSTREAM ONLINE COURSE PLATFORM — COURSE PROJECT REPORT
+%  Web Programming — HCMUT
+%  Author: Hoang Cong Minh — 2252474
+% ==============================================================================
+
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{titlesec}
+
+\geometry{a4paper, left=3cm, right=2cm, top=2cm, bottom=2cm}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    pdftitle={EduStream Online Course Platform — Project Report},
+    pdfauthor={Hoang Cong Minh},
+    pdfsubject={Web Programming}
+}
+
+% Adjust section spacing
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+
+\begin{document}
+
+% ==============================================================================
+%  TITLE PAGE
+% ==============================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+
+    \Large \textbf{VIETNAM NATIONAL UNIVERSITY - HO CHI MINH CITY} \\
+    \Large \textbf{HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY} \\
+    \vspace{1.5cm}
+
+    \LARGE \textbf{COURSE PROJECT REPORT} \\
+    \vspace{0.5cm}
+    \LARGE \textbf{WEB PROGRAMMING} \\
+    \vspace{2cm}
+
+    \LARGE \textbf{TOPIC: BUILDING THE EDUSTREAM ONLINE COURSE PLATFORM} \\
+    \vspace{3cm}
+
+    \large \textbf{Submitted by:} \\
+    Hoang Cong Minh - 2252474 \\
+    \vspace{1cm}
+    \large \textbf{Major:} Software Engineering \\
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ==============================================================================
+%  CHAPTER 1 — PROJECT OVERVIEW
+% ==============================================================================
+\chapter{Project Overview}
+
+\section{Project Introduction}
+
+The EduStream platform is a fully functional online course marketplace designed and implemented as a course project for the Web Programming subject at Ho Chi Minh City University of Technology. The project serves as a comprehensive demonstration of core web development skills, showcasing the ability to design and build a complete web application from scratch without relying on modern PHP frameworks.
+
+Unlike projects that use established frameworks such as Laravel or Symfony, EduStream is built entirely using vanilla PHP with a custom Model-View-Controller (MVC) architecture. This approach provides deep insight into how web frameworks work internally — from URL routing and request handling to database abstraction and session management.
+
+The platform enables users to browse a catalog of programming courses, view detailed information about each course, add courses to a shopping cart, and enroll either by purchasing directly or by checking out the entire cart. Registered users gain access to a personalized dashboard displaying all courses they have enrolled in, along with seamless session management that persists across page visits.
+
+\section{Project Objectives}
+
+The primary objective is to design and implement a fully functional online course platform that demonstrates mastery of fundamental web development concepts. Beyond the functional requirements, the project emphasizes clean code architecture, security best practices, and user experience considerations.
+
+The specific goals of the EduStream platform are outlined as follows:
+
+\begin{itemize}
+    \item \textbf{User Authentication}: Allow users to register, log in, and log out securely. Passwords must never be stored in plaintext — bcrypt hashing is used to protect user credentials. Sessions must persist login state across page visits.
+    
+    \item \textbf{Course Catalog}: Provide a browsable, searchable catalog of online courses. Each course displays a thumbnail, title, instructor name, price, and rating. Users can click into a course to view its full description.
+    
+    \item \textbf{Shopping Cart}: Enable both guest and authenticated users to add courses to a cart. The cart must persist across page visits within the same browser session without requiring a database until checkout.
+    
+    \item \textbf{Course Enrollment}: Allow logged-in users to enroll in courses either through direct enrollment ("Enroll Now") or through cart checkout. Enrollment records are persisted in the database.
+    
+    \item \textbf{My Courses Dashboard}: Provide enrolled users with a personalized page that lists all courses they have purchased. The page should feel personal and welcoming, encouraging continued learning.
+    
+    \item \textbf{Live Search}: Implement real-time search suggestions in the navigation bar. As the user types, matching courses appear instantly without requiring a full page reload, improving navigation speed and user experience.
+    
+    \item \textbf{Contact Form}: Build a secure, validated contact form for user inquiries. The form must validate input on both the client side (for UX) and the server side (for security), with CSRF token protection to prevent cross-site request forgery attacks.
+    
+    \item \textbf{Google Maps Integration}: Display the physical location of each course on the course detail page using embedded Google Maps. This adds a sense of real-world presence to the online learning experience.
+\end{itemize}
+
+\section{System Scope}
+
+The EduStream platform targets two distinct user roles, each with a defined set of capabilities:
+
+\subsection{Guest (Unauthenticated User)}
+
+Guests represent the majority of first-time visitors to the platform. They can:
+
+\begin{itemize}
+    \item Browse the full course catalog and view course details.
+    \item Search for courses using the live search feature.
+    \item Add courses to their shopping cart.
+    \item View and manage their shopping cart (add, remove items).
+    \item Submit inquiries via the contact form.
+    \item View the login and registration pages.
+\end{itemize}
+
+Guests cannot enroll in courses or access the My Courses dashboard without first creating an account and logging in.
+
+\subsection{Registered User (Student)}
+
+Registered users are authenticated members who have completed the sign-up process. They inherit all guest capabilities and gain additional features:
+
+\begin{itemize}
+    \item Enroll in courses directly via the "Enroll Now" button.
+    \item Check out their shopping cart to enroll in all cart items at once.
+    \item Access the "My Courses" personalized dashboard.
+    \item View whether they are already enrolled in a course (preventing duplicate purchases).
+    \item Maintain a persistent login session across browser sessions.
+\end{itemize}
+
+\section{Functional Modules}
+
+The system is organized into eight functional modules, each addressing a specific set of user needs:
+
+\begin{longtable}{|p{3.5cm}|p{10.5cm}|}
+    \caption{System Functional Modules}
+    \label{tab:modules} \\
+    \toprule
+    \textbf{Module} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Module} & \textbf{Description} \\
+    \midrule
+    \endhead
+    Authentication & User registration, login, logout with session management and bcrypt password security \\
+    Course Catalog & Browsable listing of all courses with sidebar navigation and responsive grid layout \\
+    Course Detail & Detailed course view including description, instructor, price, rating, enrollment button, and location map \\
+    Shopping Cart & Add/remove courses, persist cart via PHP sessions, checkout flow with duplicate enrollment prevention \\
+    Enrollment & Direct enrollment and checkout enrollment, with records persisted in the enrollments table \\
+    My Courses & Personalized dashboard listing all purchased courses with continue learning links \\
+    Live Search & AJAX-powered real-time search suggestions in the navigation bar using the Fetch API \\
+    Contact Form & Server-validated contact submission with CSRF token protection and client-side real-time feedback \\
+    \bottomrule
+\end{longtable}
+
+\section{Technologies Used}
+
+The EduStream platform is built using a lightweight, framework-free technology stack that emphasizes understanding of core web development concepts over convenience.
+
+\begin{longtable}{|p{3.5cm}|p{10.5cm}|}
+    \caption{Technology Stack}
+    \label{tab:techstack} \\
+    \toprule
+    \textbf{Technology} & \textbf{Usage in Project} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Technology} & \textbf{Usage in Project} \\
+    \midrule
+    \endhead
+    PHP 8.x & Server-side programming language. Implements the entire MVC framework including custom URL routing, controller logic, and database interaction using PDO. \\
+    MySQL & Relational database management system. Stores all persistent data including users, courses, enrollments, locations, and contact form submissions. Used via the MAMP local development environment. \\
+    HTML5 & Semantic markup language for all page structures. Ensures accessibility and proper document structure across all pages. \\
+    CSS3 & Custom responsive styling. Uses CSS custom properties (variables) for consistent theming, flexbox and grid for layout, transitions for animations, and media queries for responsive breakpoints. Google Fonts (Lexend, Inter) and Material Symbols icons loaded via CDN. \\
+    JavaScript (ES6) & Client-side interactivity. Implements AJAX live search using the Fetch API with debouncing, DOM manipulation for rendering search results, and client-side form validation. \\
+    PDO (PHP Data Objects) & Database access abstraction. Uses prepared statements exclusively to prevent SQL injection attacks. Automatic type detection for parameter binding ensures correct data types. \\
+    PHP Sessions & User session management. Stores authentication state (\code{user\_id}, \code{user\_name}, etc.) and shopping cart data (\code{\$\_SESSION['cart']}) to maintain state across HTTP requests. \\
+    Apache (MAMP) & Local development web server. Runs PHP 8.3 and MySQL on macOS for local development and testing. \\
+    \bottomrule
+\end{longtable}
+
+The platform intentionally avoids using any PHP framework (such as Laravel, Symfony, or CodeIgniter). By building the MVC architecture from scratch, the project demonstrates a thorough understanding of fundamental web development concepts including HTTP request/response handling, URL routing, session management, database abstraction, and the separation of concerns through the MVC pattern.
+
+\newpage
+
+% ==============================================================================
+%  CHAPTER 2 — SYSTEM DESIGN
+% ==============================================================================
+\chapter{System Design}
+
+This chapter describes the design of the EduStream platform, covering the database schema, the MVC architectural pattern, and the user interface design system.
+
+\section{Database Design}
+
+The EduStream platform uses a relational database schema consisting of five core tables: \code{users}, \code{courses}, \code{enrollments}, \code{locations}, and \code{contacts}. These tables model the core entities of the platform and their relationships.
+
+\subsection{Entity-Relationship Overview}
+
+The relationships between tables are designed with referential integrity in mind:
+
+\begin{itemize}
+    \item \textbf{users} $\leftrightarrow$ \textbf{enrollments}: One-to-Many. A single user can enroll in many different courses, but each enrollment record belongs to exactly one user.
+    \item \textbf{courses} $\leftrightarrow$ \textbf{enrollments}: One-to-Many. A single course can be enrolled in by many different users, creating many enrollment records.
+    \item \textbf{courses} $\leftrightarrow$ \textbf{locations}: Many-to-One. Each course is associated with one physical location, but a location may host multiple courses.
+    \item \textbf{courses} $\leftrightarrow$ \textbf{categories}: Many-to-One. Each course belongs to one category (e.g., "Web Development", "Data Science"), though the categories table is referenced but not fully persisted in the current version.
+\end{itemize}
+
+\subsection{users — Registered Platform Users}
+
+The \code{users} table stores all registered user accounts. Each user has a unique email address used for login, a bcrypt-hashed password, and a display name.
+
+\begin{longtable}{|p{3.5cm}|p{3cm}|p{7cm}|}
+    \caption{users — Registered platform users}
+    \label{tab:users} \\
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endhead
+    user\_id & INT (PK, AUTO) & Primary key, auto-incremented \\
+    full\_name & VARCHAR(100) & User's display name, shown throughout the platform \\
+    email & VARCHAR(255) & Unique email address, used as the login identifier \\
+    password\_hash & VARCHAR(255) & bcrypt-hashed password, never stored in plaintext \\
+    role & ENUM('student','admin') & User role, default 'student'. Reserved for future admin features \\
+    created\_at & TIMESTAMP & Account creation timestamp, auto-set to current time \\
+    \bottomrule
+\end{longtable}
+
+\subsection{courses — Course Listings}
+
+The \code{courses} table is the central entity of the platform, storing all information about available courses.
+
+\begin{longtable}{|p{3.5cm}|p{3cm}|p{7cm}|}
+    \caption{courses — Course listings}
+    \label{tab:courses} \\
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endhead
+    course\_id & INT (PK, AUTO) & Primary key, auto-incremented \\
+    title & VARCHAR(255) & Course title displayed in the catalog and detail page \\
+    slug & VARCHAR(255) & URL-friendly identifier (unique), used in clean URLs like /courses/detail/python-basics \\
+    description & TEXT & Full course description with detailed information about what students will learn \\
+    instructor & VARCHAR(100) & Instructor's full name \\
+    price & DECIMAL(10,2) & Course price in USD \\
+    image\_url & VARCHAR(500) & URL to the course thumbnail image displayed in the catalog grid \\
+    rating & DECIMAL(3,2) & Average course rating from 0.00 to 5.00, displayed as stars \\
+    location\_id & INT (FK) & Foreign key referencing the locations table \\
+    category\_id & INT & Category identifier for future filtering functionality \\
+    created\_at & TIMESTAMP & Course creation timestamp \\
+    \bottomrule
+\end{longtable}
+
+\subsection{enrollments — Course Purchase Records}
+
+The \code{enrollments} table serves as a junction table connecting users and courses. Each record represents one user's enrollment in one course.
+
+\begin{longtable}{|p{3.5cm}|p{3cm}|p{7cm}|}
+    \caption{enrollments — Course purchase records}
+    \label{tab:enrollments} \\
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endhead
+    enrollment\_id & INT (PK, AUTO) & Primary key, auto-incremented \\
+    user\_id & INT (FK) & Foreign key referencing the users table \\
+    course\_id & INT (FK) & Foreign key referencing the courses table \\
+    enrolled\_at & TIMESTAMP & Enrollment timestamp, automatically set to CURRENT\_TIMESTAMP when created \\
+    \bottomrule
+\end{longtable}
+
+The combination of \code{user\_id} and \code{course\_id} effectively creates a unique constraint — a user cannot enroll in the same course twice. The application enforces this at the application level before inserting.
+
+\subsection{locations — Physical Course Locations}
+
+The \code{locations} table stores information about the physical venues associated with courses. This data is used to display a Google Maps embed on the course detail page.
+
+\begin{longtable}{|p{3.5cm}|p{3cm}|p{7cm}|}
+    \caption{locations — Physical course locations}
+    \label{tab:locations} \\
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endhead
+    location\_id & INT (PK, AUTO) & Primary key, auto-incremented \\
+    location\_name & VARCHAR(200) & Name of the venue, campus, or building \\
+    address & VARCHAR(500) & Full street address for the location \\
+    map\_link & VARCHAR(1000) & Google Maps embed URL (\code{<iframe>} src), stored for display on the course detail page \\
+    \bottomrule
+\end{longtable}
+
+\subsection{contacts — Contact Form Submissions}
+
+The \code{contacts} table stores all contact form submissions, allowing the platform administrator to review user inquiries.
+
+\begin{longtable}{|p{3.5cm}|p{3cm}|p{7cm}|}
+    \caption{contacts — Contact form submissions}
+    \label{tab:contacts} \\
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+    \midrule
+    \endhead
+    contact\_id & INT (PK, AUTO) & Primary key, auto-incremented \\
+    name & VARCHAR(100) & Submitter's full name \\
+    email & VARCHAR(255) & Submitter's email address for follow-up \\
+    subject & VARCHAR(200) & Brief subject line summarizing the inquiry \\
+    message & TEXT & Full message content with detailed information \\
+    created\_at & TIMESTAMP & Submission timestamp, auto-set to current time \\
+    \bottomrule
+\end{longtable}
+
+\section{Architectural Design}
+
+The platform follows the \textbf{Model-View-Controller (MVC)} design pattern implemented entirely from scratch in vanilla PHP. This section describes the core framework components and how they interact to process user requests.
+
+\subsection{MVC Architecture Overview}
+
+MVC is a software architectural pattern that separates an application into three interconnected components, each responsible for a specific aspect of the application:
+
+\begin{itemize}
+    \item \textbf{Model}: The data access layer. Each model class encapsulates database access logic using PDO prepared statements. Models are responsible for retrieving data from the database, validating it, and returning it to controllers. The EduStream platform includes the following models: \code{UserModel}, \code{CourseModel}, \code{CartModel}, \code{EnrollmentModel}, \code{SearchModel}, and \code{ContactModel}.
+    
+    \item \textbf{View}: The presentation layer. View files are PHP scripts located in \code{app/views/} that render HTML output. They receive data from controllers (passed as associative arrays) and use PHP's \code{extract()} function to convert those arrays into local variables, making it easy to access data like \code{\$course['title']} as \code{\$title}. Views contain no business logic — only presentation code.
+    
+    \item \textbf{Controller}: The business logic layer. Controller classes handle HTTP requests, interact with models, and render views. Each URL maps to a specific controller and method. All controllers extend the base \code{Controller} class which provides the \code{model()} and \code{view()} utility methods. The platform includes: \code{HomeController}, \code{CoursesController}, \code{AuthController}, \code{UserController}, \code{SearchController}, and \code{ContactController}.
+\end{itemize}
+
+\subsection{Request Lifecycle}
+
+When a user navigates to a URL like \code{/courses/detail/python-basics}, the following sequence occurs:
+
+\begin{enumerate}
+    \item The browser sends an HTTP request to \code{index.php} on the web server.
+    \item \code{index.php} starts a PHP session and requires the core framework files (\code{App.php}, \code{Controller.php}, \code{Database.php}, \code{init.php}).
+    \item A new \code{App} instance is created, which parses the URL path into segments: \code{['courses', 'detail', 'python-basics']}.
+    \item The router maps \code{'courses'} to \code{CoursesController}, \code{'detail'} to the \code{detail()} method, and \code{'python-basics'} as a parameter.
+    \item The \code{CoursesController::detail('python-basics')} method is called.
+    \item Inside the method, it loads \code{CourseModel}, calls \code{getCourseBySlug('python-basics')} to fetch the course data from the database.
+    \item The controller builds a \code{\$data} array and calls \code{\$this->view('course\_detail/course\_detail', \$data)}.
+    \item The base \code{Controller::view()} method extracts the \code{\$data} array into local variables and includes the view file.
+    \item The view file renders HTML with the course data and is sent back to the browser as an HTTP response.
+\end{enumerate}
+
+\subsection{Custom URL Router (App.php)}
+
+The \code{App} class is the heart of the routing system. It is responsible for parsing incoming URLs and dispatching them to the appropriate controller and method.
+
+The router works as follows:
+
+\begin{enumerate}
+    \item \code{parseUrl()} retrieves and sanitizes \code{\$\_GET['url']}, splitting it by forward slashes into an array of segments. For example, \code{/user/my-courses} becomes \code{['user', 'my-courses']}.
+    \item The first URL segment maps to a controller class name. The router checks if \code{app/controllers/UserController.php} exists. If it does, that controller is loaded. Otherwise, it defaults to \code{HomeController}.
+    \item The second URL segment maps to a method within the controller. If \code{myCourses()} exists in \code{UserController}, it is called. Otherwise, the default method \code{index()} is used.
+    \item Remaining URL segments are passed as parameters to the method. For \code{/courses/detail/python-basics}, the parameter would be \code{'python-basics'}.
+    \item If no controller or method is found, the router gracefully falls back to \code{HomeController::index()}.
+    \item \code{call\_user\_func\_array()} invokes the controller method with the parsed parameters.
+\end{enumerate}
+
+The router is intentionally simple yet flexible, supporting clean URLs without the need for Apache's mod\_rewrite. The MAMP configuration routes all requests through \code{index.php} via a standard \code{.htaccess} configuration.
+
+\subsection{Base Controller (Controller.php)}
+
+The base \code{Controller} class serves as the foundation for all application controllers. It provides two essential utility methods that are used by every controller:
+
+\begin{itemize}
+    \item \code{model(\$model)}: This method dynamically loads a model class file from \code{app/models/} and instantiates it. This enables lazy loading of data dependencies — models are only loaded when needed, not all at once. For example, \code{\$this->model('CourseModel')} loads and returns a \code{CourseModel} instance.
+    
+    \item \code{view(\$view, \$data = [])}: This method renders a view file. It first checks if the view file exists at \code{app/views/\$view.php}. If found, it extracts the \code{\$data} associative array into local variables (so \code{\$data['course']} becomes \code{\$course}) and includes the view file. If the view does not exist, it terminates with an error message.
+\end{itemize}
+
+By providing these two methods, the base controller ensures a consistent interface across all controllers while keeping them lightweight and focused on their specific business logic.
+
+\subsection{Database Abstraction Layer (Database.php)}
+
+The \code{Database} class wraps PHP's PDO (PHP Data Objects) to provide a clean, reusable interface for all database operations. This is the only class that directly interacts with the MySQL database, ensuring that all queries are handled consistently and securely.
+
+Key features of the database abstraction layer include:
+
+\begin{itemize}
+    \item \textbf{Prepared Statements}: All queries use PDO prepared statements with bound parameters. This prevents SQL injection attacks by separating query structure from user data. Parameters are bound using either positional placeholders (\code{?}) or named placeholders (\code{:name}).
+    
+    \item \textbf{Automatic Type Detection}: The \code{bind()} method automatically detects the PHP data type and sets the appropriate PDO constant — \code{PDO::PARAM\_INT} for integers, \code{PDO::PARAM\_BOOL} for booleans, \code{PDO::PARAM\_NULL} for null values, and \code{PDO::PARAM\_STR} for strings. This eliminates manual type casting errors.
+    
+    \item \textbf{Exception-Based Error Handling}: The PDO connection is configured with \code{PDO::ATTR\_ERRMODE => PDO::ERRMODE\_EXCEPTION}, meaning any database error throws a \code{PDOException} that can be caught and handled gracefully, preventing raw error messages from leaking to users.
+    
+    \item \textbf{Default Fetch Mode}: The connection uses \code{PDO::FETCH\_ASSOC} as the default fetch mode, so all query results return associative arrays instead of objects, simplifying data access in controllers and views.
+    
+    \item \textbf{UTF-8 Support}: The connection is configured with \code{charset=utf8mb4} to support full Unicode characters including Vietnamese diacritics, which is critical for a platform targeting Vietnamese users.
+\end{itemize}
+
+The class exposes six public methods: \code{query()} to prepare a SQL statement, \code{bind()} to bind a parameter value, \code{execute()} to run the query, \code{resultSet()} to fetch all rows, \code{single()} to fetch one row, and \code{lastInsertId()} (inherited from PDO) to retrieve the ID of the last inserted row.
+
+\subsection{Application Bootstrap (init.php)}
+
+The \code{init.php} file is the bootstrap layer that initializes the application environment before the \code{App} router takes over. It performs two critical tasks:
+
+\begin{enumerate}
+    \item \textbf{Defining the BASE\_URL Constant}: The \code{BASE\_URL} constant is computed by parsing \code{\$\_SERVER['SCRIPT\_NAME']}, which gives the path to \code{index.php} from the document root. This ensures all internal links work correctly whether the application is hosted at the root domain (\code{http://localhost/}) or in a subdirectory (\code{http://localhost/WebProgramming-online\_course/}).
+    
+    \item \textbf{Requiring Core Framework Files}: The bootstrap file requires the three core framework classes: \code{App.php}, \code{Controller.php}, and \code{Database.php}. These are loaded once and available to the entire application.
+\end{enumerate}
+
+By centralizing these initialization tasks, the \code{index.php} entry point remains clean and focused — it only starts the session and kicks off the router.
+
+\section{User Interface Design}
+
+The EduStream platform features a polished, professional user interface that prioritizes clarity, ease of use, and visual appeal. The UI design follows a consistent set of principles and a shared design system that ensures a cohesive experience across all pages.
+
+\subsection{Layout Structure}
+
+All pages share a common structural pattern built from reusable PHP include files. This approach promotes consistency and reduces code duplication across the application.
+
+\begin{itemize}
+    \item \textbf{\code{header.php}}: The shared navigation bar included at the top of every page. Contains the platform logo and name, main navigation menu links (Home, Courses, Contact), the live search input field with a results dropdown panel, and the user menu (showing "Login / Register" when logged out, or the user's name and "Logout" when logged in). The header has a fixed height of 68 pixels and uses a clean white background with a subtle bottom border.
+    
+    \item \textbf{\code{footer.php}}: The shared footer included at the bottom of every page. Contains site links, social media icons, and copyright information. Uses a dark background to visually separate it from the page content.
+    
+    \item \textbf{Page Content}: Each page has its own dedicated view file (e.g., \code{home.php}, \code{catalog.php}, \code{course\_detail.php}) rendered between the header and footer. This is where the unique content of each page lives.
+    
+    \item \textbf{Auth Pages}: The login (\code{auth/login.php}) and registration (\code{auth/register.php}) pages use a standalone layout with a custom \code{auth.css} stylesheet. They have their own centered card-based design, separate from the main site layout, which helps visually distinguish the authentication flow.
+\end{itemize}
+
+This shared layout structure means that any change to the header or footer is automatically reflected across all pages, ensuring visual consistency throughout the platform.
+
+\subsection{Design System}
+
+The platform uses a cohesive design system built on CSS custom properties (CSS variables) defined in the main stylesheet. This approach centralizes design decisions — colors, spacing, typography, and radii — so they can be updated in one place and propagated across all stylesheets.
+
+\begin{longtable}{|p{4cm}|p{4cm}|p{5cm}|}
+    \caption{Design System — CSS Variables}
+    \label{tab:cssvars} \\
+    \toprule
+    \textbf{Variable} & \textbf{Value} & \textbf{Usage} \\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Variable} & \textbf{Value} & \textbf{Usage} \\
+    \midrule
+    \endhead
+    \code{--color-primary} & \texttt{\#0056D2} & Primary buttons, links, and accent elements \\
+    \code{--color-on-surface} & \texttt{\#1A1A2E} & Primary text color for headings and body text \\
+    \code{--color-secondary} & \texttt{\#6B7280} & Secondary text for subtitles, labels, and metadata \\
+    \code{--color-surface} & \texttt{\#FFFFFF} & Card backgrounds, inputs, and component surfaces \\
+    \code{--color-page-bg} & \texttt{\#F5F6FA} & Page background color for the main content area \\
+    \code{--nav-height} & \texttt{68px} & Fixed navigation bar height for consistent layout offset \\
+    \code{--radius-sm} & \texttt{8px} & Small border radius for inputs and small cards \\
+    \code{--radius-md} & \texttt{12px} & Medium border radius for buttons and medium cards \\
+    \code{--radius-lg} & \texttt{20px} & Large border radius for featured cards and modals \\
+    \bottomrule
+\end{longtable}
+
+The typography uses \textbf{Lexend} from Google Fonts for headings and \textbf{Inter} for body text. Lexend is a variable font designed to reduce visual noise and improve reading speed, providing a clean and modern academic appearance. Inter is optimized for screen reading and has excellent legibility at small sizes.
+
+Material Symbols Outlined icons are used throughout the platform for consistent iconography — cart icons, search icons, user icons, and navigation arrows. They are loaded via the Google Fonts CDN and integrate seamlessly with the CSS design system.
+
+The responsive design uses CSS flexbox for component layout and CSS grid for the course catalog. Media queries adjust the layout for tablet and mobile screens, ensuring the platform is usable on all device sizes.
+
+\subsection{Key Pages}
+
+The platform consists of seven key pages, each serving a distinct purpose in the user journey:
+
+\begin{itemize}
+    \item \textbf{Home Page (\code{/})}: The landing page featuring a hero banner with a headline, subtext, and a call-to-action button directing visitors to the course catalog. Below the hero, a grid of featured courses is displayed, along with value proposition sections explaining why users should choose EduStream.
+    
+    \item \textbf{Course Catalog (\code{/courses})}: A two-column layout with a left sidebar containing category filters and a right content area showing a responsive grid of course cards. Each course card displays the thumbnail image, title, instructor name, price, and a star rating. The sidebar categories are currently visual placeholders for future server-side filtering functionality.
+    
+    \item \textbf{Course Detail (\code{/courses/detail/[slug]})}: A full-width layout with the course image at the top, followed by the title, instructor, price, rating, enrollment button, and Add to Cart button. Below the main content, a detailed description section and a Google Maps embed showing the course location are displayed. If the user is already enrolled, the enrollment button changes to "Continue Learning".
+    
+    \item \textbf{Shopping Cart (\code{/courses/cart})}: A dedicated cart page listing all courses currently in the session cart. Each item shows the course thumbnail, title, instructor, and price, along with a remove button. A summary section at the bottom shows the total price and a Checkout button. An empty state message is displayed when the cart is empty.
+    
+    \item \textbf{My Courses (\code{/user/my-courses})}: A personalized dashboard accessible only to logged-in users. Shows a greeting with the user's name, a count of enrolled courses, and a grid of enrolled course cards. Each card has a "Continue Learning" button that links to the course detail page. An empty state with an illustration encourages users to explore the catalog when they have not enrolled in any courses.
+    
+    \item \textbf{Contact (\code{/contact})}: A clean form with four fields: name, email, subject, and message. Each field has real-time client-side validation that shows error messages as the user types or blurs the field. Upon successful submission, a success message is displayed and the form is reset.
+    
+    \item \textbf{Login / Register (\code{/auth/login}, \code{/auth/register})}: Centered standalone forms with a clean card-based design. The login form has email and password fields with a "Forgot Password?" link (non-functional placeholder) and a link to the registration page. The registration form has name, email, and password fields with password strength guidance and validation error display.
+\end{itemize}
+
+% --- IMAGE PLACEHOLDERS FOR KEY SCREENS ---
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/home-page.png}
+    \caption{Home Page — Hero banner with featured course grid}
+    \label{fig:home}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/catalog-page.png}
+    \caption{Course Catalog Page — Sidebar with categories and responsive course card grid}
+    \label{fig:catalog}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/course-detail-page.png}
+    \caption{Course Detail Page — Full course information with enrollment button and Google Maps}
+    \label{fig:course-detail}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/cart-page.png}
+    \caption{Shopping Cart Page — Cart items with total price and checkout button}
+    \label{fig:cart}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/my-courses-page.png}
+    \caption{My Courses Dashboard — Personalized page listing all enrolled courses}
+    \label{fig:my-courses}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/contact-page.png}
+    \caption{Contact Form Page — Validated contact submission form}
+    \label{fig:contact}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/login-page.png}
+    \caption{Login Page — Standalone authentication form}
+    \label{fig:login}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/search-suggestions.png}
+    \caption{Live Search — Real-time AJAX search suggestions in the navigation bar}
+    \label{fig:search}
+\end{figure}
+
+\newpage
+
+% ==============================================================================
+%  CHAPTER 3 — CORE FEATURES IMPLEMENTATION
+% ==============================================================================
+\chapter{Core Features Implementation}
+
+This chapter provides a detailed description of how each core feature is implemented, covering the design decisions, security considerations, and user experience optimizations.
+
+\section{Authentication and Authorization}
+
+Authentication is the foundation of the platform's user management system. It ensures that only registered users can enroll in courses and access personalized features, while also protecting user accounts from unauthorized access.
+
+\subsection{Password Hashing and Storage}
+
+User passwords are one of the most sensitive pieces of data in any web application. The EduStream platform never stores passwords in plaintext — instead, it uses PHP's built-in \code{password\_hash()} function with the \code{PASSWORD\_BCRYPT} algorithm.
+
+When a user registers, the \code{UserModel::create()} method receives the plaintext password, passes it through \code{password\_hash($password, PASSWORD\_BCRYPT)}, and stores the resulting hash in the database. Bcrypt is a computationally expensive hashing algorithm that automatically generates a random salt for each hash, making pre-computed rainbow table attacks ineffective.
+
+On login, the \code{UserModel::verifyPassword()} method retrieves the user record by email, then calls \code{password\_verify($submittedPassword, $storedHash)}. This function compares the submitted password against the stored hash using the same bcrypt algorithm, returning true if they match and false otherwise.
+
+This approach ensures that even if the database is compromised, attackers cannot recover the original passwords. Each hash includes its own salt, so the same password for two different users produces two different hashes.
+
+\subsection{Session Management}
+
+Sessions are initialized at the very top of \code{index.php} using \code{session\_start()}, before any output is sent to the browser. This ensures that the session cookie is sent in the HTTP response headers, enabling stateful interaction across page requests.
+
+Upon successful login, the \code{AuthController} stores the following information in the PHP session:
+
+\begin{itemize}
+    \item \code{\$\_SESSION['user\_id']}: The authenticated user's database ID, used to identify the user in all subsequent requests.
+    \item \code{\$\_SESSION['user\_name']}: The user's display name, used to personalize the navigation bar greeting.
+    \item \code{\$\_SESSION['user\_email']}: The user's email address, available for display or contact purposes.
+    \item \code{\$\_SESSION['user\_role']}: The user's role ('student' or 'admin'), reserved for future role-based access control.
+\end{itemize}
+
+On logout, the \code{AuthController} clears all session variables and calls \code{session\_destroy()} to fully terminate the session, ensuring that no residual data remains.
+
+Because sessions persist across page requests within the same browser, the shopping cart stored in \code{\$\_SESSION['cart']} also persists — users can add courses, close the browser, and return later to complete their purchase.
+
+PHP sessions use cookies by default. The session cookie stores a unique session ID that the server uses to look up the session data. This approach is secure as long as the session ID is unpredictable and the session data is stored server-side (which PHP handles by default).
+
+\subsection{Route Protection and Redirect-after-Login}
+
+Protected routes are routes that should only be accessible to logged-in users, such as the checkout process, enrollment endpoint, and the My Courses dashboard. Each protected route begins with a check for \code{\$\_SESSION['user\_id']}.
+
+If the user is not logged in, they are redirected to the login page. Critically, the intended destination is stored in \code{\$\_SESSION['redirect\_after\_login']} before the redirect. After a successful login, the \code{AuthController} checks this session variable and redirects the user back to the originally requested page instead of always sending them to the home page. This provides a seamless user experience — a user who tries to access a protected page is redirected to login, and upon successful login, lands exactly where they intended.
+
+Conversely, the \code{AuthController} implements \code{redirectIfLoggedIn()} to prevent already-authenticated users from accessing the login or registration pages. Without this check, a logged-in user visiting \code{/auth/login} would be redirected to login again, creating an infinite redirect loop (the notorious \code{ERR\_TOO\_MANY\_REDIRECTS} browser error).
+
+\section{AJAX Live Search}
+
+The navigation bar features a real-time search input that provides instant course suggestions as the user types. This is implemented entirely in vanilla JavaScript using the Fetch API, without any external libraries or frameworks.
+
+\subsection{Server-Side Search Endpoint}
+
+The \code{SearchController::suggest()} method serves as the AJAX endpoint, mapped to the URL \code{/search/suggest}. It accepts a \code{q} query parameter and returns a JSON response.
+
+The method first validates the input — if the query is empty or shorter than one character, it returns an empty result set immediately. This prevents unnecessary database queries for meaningless searches.
+
+The method then delegates the actual search to \code{SearchModel::searchCourses($q)}, which performs a SQL query using the \code{LIKE} operator with wildcards (\code{WHERE title LIKE '\%$q\%'}). The results are limited to a reasonable number (e.g., 5-8 suggestions) to keep the response fast and the dropdown manageable.
+
+Before sending the response, the controller sets the \code{Content-Type: application/json} HTTP header so that the JavaScript client knows how to parse the response.
+
+\subsection{Client-Side Search Logic}
+
+The \code{search-suggest.js} file contains the client-side logic for the live search feature. Several optimization strategies are employed to ensure a smooth user experience:
+
+\begin{itemize}
+    \item \textbf{Debouncing}: A 280-millisecond debounce timer is used. The search API is only called after the user stops typing for 280 milliseconds. This dramatically reduces the number of HTTP requests during fast typing — without debouncing, typing "python" quickly could generate 6+ requests; with debouncing, it generates just 1 or 2.
+    
+    \item \textbf{XSS Prevention}: All user-generated content (course titles, instructor names) is escaped before being inserted into the HTML. The code uses a DOM-based approach: \code{document.createElement('div').textContent = string; return div.innerHTML;} This safely converts any HTML special characters in the data to their HTML entity equivalents, preventing cross-site scripting attacks even if the database contains malicious content.
+    
+    \item \textbf{Fetch API with JSON}: The \code{fetch()} function sends a GET request to the search endpoint with an \code{Accept: application/json} header. The response is parsed using \code{res.json()}, which converts the JSON string into a JavaScript object.
+    
+    \item \textbf{Graceful Error Handling}: Network errors or non-OK HTTP responses are caught by the \code{.catch()} handler, which displays a fallback message ("Search unavailable."). This ensures the search component never leaves the user in a broken state.
+    
+    \item \textbf{UX Enhancements}: Pressing the Escape key hides the results panel. Clicking anywhere outside the search component also dismisses the panel. When no results are found, a friendly "No courses found." message is displayed.
+\end{itemize}
+
+The search component is wrapped in an Immediately Invoked Function Expression (IIFE) to avoid polluting the global namespace. The base URL for API calls is dynamically determined from \code{window.__BASE\_URL__}, which is set by the server, ensuring that the search works correctly regardless of where the application is hosted.
+
+\section{Google Maps Integration}
+
+Each course in the database is associated with a physical location stored in the \code{locations} table. This location information is displayed on the course detail page using an embedded Google Maps iframe.
+
+The \code{locations} table contains a \code{map\_link} column that stores the embed URL for Google Maps (the \code{src} attribute of an \code{<iframe>}). This URL is generated from Google Maps by searching for a location, clicking "Share", selecting "Embed a map", and copying the HTML.
+
+On the course detail page, the map is rendered using a responsive \code{<iframe>} element. The \code{htmlspecialchars()} function is applied to the map URL before inserting it into the \code{src} attribute, providing defense-in-depth XSS protection even though the data originates from the trusted database.
+
+The \code{loading="lazy"} attribute is added to the iframe, which instructs the browser to defer loading the map until the iframe scrolls into the viewport. This improves the initial page load performance, especially on pages where the map is below the fold.
+
+The \code{map\_link} is retrieved via a SQL JOIN in \code{CourseModel::getCourseBySlug()}, which joins the \code{courses} table with the \code{locations} table on \code{course\_id = location\_id}, along with a LEFT JOIN to the \code{categories} table for the category name.
+
+\section{Cart Management and Enrollment}
+
+The shopping cart is one of the most user-facing features of the platform. It is implemented using PHP sessions, which means the cart data lives on the server and is associated with the user's browser session, not stored in a database until checkout.
+
+\subsection{Session-Based Cart Architecture}
+
+The \code{CartModel} class provides a clean, object-oriented API for cart operations:
+
+\begin{itemize}
+    \item \code{getCart()}: Returns the array of course IDs stored in \code{\$\_SESSION['cart']}.
+    \item \code{addToCart(\$courseId)}: Appends a course ID to the session array. Duplicates are silently ignored.
+    \item \code{removeFromCart(\$courseId)}: Filters out a course ID from the session array.
+    \item \code{clearCart()}: Resets the session cart to an empty array.
+    \item \code{getCartWithDetails()}: Fetches full course details for all course IDs in the cart using a single SQL \code{IN} query with dynamic placeholders. This is more efficient than fetching course details one by one.
+    \item \code{isInCart(\$courseId)}: Checks whether a specific course is already in the cart.
+\end{itemize}
+
+Because the cart is stored in \code{\$\_SESSION['cart']}, it persists across page requests within the same browser session. A user can add courses, browse other pages, close the browser, and return later — the cart will still contain the added courses. The cart only disappears when the user logs out (clearing the session) or explicitly clears it.
+
+The cart is available to both guest users and logged-in users. Guests can add courses to their cart, but they cannot proceed to checkout without logging in first. When a guest adds a course to the cart and then logs in, their session-based cart merges naturally with their user identity.
+
+Duplicate enrollment prevention is implemented at two levels. At the application level, \code{CoursesController::addToCart()} checks whether the user is already enrolled in a course before adding it to the cart. If already enrolled, the user is redirected to the course detail page with a warning message. At the checkout level, the \code{CoursesController::checkout()} method checks \code{\$enrollmentModel->isEnrolled()} for each course before creating an enrollment record.
+
+\subsection{Checkout Flow}
+
+The checkout process is triggered when a logged-in user clicks the "Checkout" button on the cart page. The flow is as follows:
+
+\begin{enumerate}
+    \item The \code{CoursesController::checkout()} method first verifies that the user is logged in. If not, it stores the intended destination in \code{\$\_SESSION['redirect\_after\_login']} and redirects to the login page.
+    \item It retrieves all courses in the cart using \code{\$cartModel->getCartWithDetails()}.
+    \item If the cart is empty, the user is redirected back to the cart page with an error message.
+    \item For each course in the cart, the system checks whether the user is already enrolled using \code{\$enrollmentModel->isEnrolled()}. If not enrolled, a new enrollment record is created.
+    \item After all enrollments are created, the cart is cleared using \code{\$cartModel->clearCart()}.
+    \item A success message is stored in the session, and the user is redirected to the "My Courses" dashboard.
+    \item The My Courses page retrieves all enrollment records for the user and displays them as course cards.
+\end{enumerate}
+
+The \code{enrollments} table's \code{enrolled\_at} column uses \code{DEFAULT CURRENT\_TIMESTAMP}, so MySQL automatically sets the enrollment timestamp when the record is created. This provides an accurate record of when each course was purchased, without requiring the application to generate or pass the timestamp.
+
+\section{Contact Form Handling}
+
+The contact form demonstrates comprehensive input validation and security practices, implementing a defense-in-depth strategy with both client-side and server-side validation layers.
+
+\subsection{Server-Side Validation}
+
+Server-side validation is the last line of defense against invalid data. Even if a malicious user bypasses client-side validation by disabling JavaScript or using a tool like Postman, the server-side validation ensures that no bad data enters the system.
+
+The \code{ContactController::index()} method validates every submitted field:
+
+\begin{itemize}
+    \item \textbf{Name}: Required, must be between 2 and 100 characters, and must contain only letters (including Vietnamese characters \code{À-ỹ}), spaces, and periods. This is validated using a regex pattern: \code{/^[a-zA-ZÀ-ỹ\s.]+$/u}.
+    \item \textbf{Email}: Required, must be a valid email format (validated using PHP's \code{filter\_var()} with \code{FILTER\_VALIDATE\_EMAIL}), and must not exceed 255 characters.
+    \item \textbf{Subject}: Required, must be between 5 and 200 characters.
+    \item \textbf{Message}: Required, must be between 10 and 5000 characters.
+    \item \textbf{CSRF Token}: Must match the token stored in the session. If it does not match, the request is rejected with a generic "Invalid request" message.
+\end{itemize}
+
+Each validation rule generates a specific, user-friendly error message that is passed back to the view and displayed beneath the corresponding form field.
+
+\subsection{CSRF Token Protection}
+
+CSRF (Cross-Site Request Forgery) is an attack where a malicious website tricks a logged-in user's browser into sending a request to the target site without the user's consent. For the contact form, this could mean an attacker submitting spam or abusive messages on behalf of a victim.
+
+The platform prevents CSRF attacks using a token-based approach:
+
+\begin{enumerate}
+    \item A CSRF token is generated on every page load using \code{random\_bytes(32)} and stored in \code{\$\_SESSION['csrf\_token']}.
+    \item The token is embedded in the contact form as a hidden input field: \code{<input type="hidden" name="csrf\_token" value="...">}.
+    \item When the form is submitted, the controller compares \code{\$\_POST['csrf\_token']} with \code{\$\_SESSION['csrf\_token']}.
+    \item If they do not match, the request is rejected. The attacker cannot read the token (due to the Same-Origin Policy) and therefore cannot submit a valid request.
+    \item After successful validation, the CSRF token is regenerated to prevent token reuse (replay attacks).
+\end{enumerate}
+
+This approach is both simple and effective, requiring minimal code while providing strong protection against CSRF attacks.
+
+\subsection{Client-Side Validation}
+
+While server-side validation is mandatory for security, client-side validation is essential for a good user experience. It provides instant feedback as the user interacts with the form, reducing the frustration of submitting and waiting for an error response.
+
+JavaScript validation is implemented in the page's script section (or a separate JS file). It mirrors the server-side rules and displays error messages in real-time beneath each field. For example, the name field shows "Name must be at least 2 characters" as soon as the user types a single character and blurs the field.
+
+Client-side validation is purely for UX — it can be bypassed. Server-side validation is the security layer that ensures bad data is never processed.
+
+Together, these two layers create a defense-in-depth strategy: client-side validation improves UX with instant feedback, while server-side validation ensures that no invalid data enters the system, regardless of how the request was submitted.
+
+\section{Feedback and Notification System}
+
+Throughout the platform, user actions are accompanied by feedback messages that inform the user of the outcome. This is implemented using session-based flash messages.
+
+When a controller performs an action (e.g., adding a course to the cart), it stores a message in the session: \code{\$\_SESSION['success'] = 'Added "Python Basics" to your cart!'}. The message is stored in the session rather than passed directly to the view, because the redirect that follows the action destroys the POST data and the controller's local variables.
+
+The header view checks for these session flash messages and displays them as styled alert banners at the top of the page. Three types of messages are supported: success (green), warning (yellow), and error (red). After displaying the message, the controller unsets it from the session so it does not appear again on subsequent page loads.
+
+This pattern provides a clean, consistent way to communicate with users across all pages without requiring each controller to pass message data explicitly to every view.
+
+\newpage
+
+% ==============================================================================
+%  CHAPTER 4 — CONCLUSION
+% ==============================================================================
+\chapter{Conclusion}
+
+\section{Achievements}
+
+The EduStream online course platform has been successfully designed and implemented with all planned core features functioning correctly. The project demonstrates a comprehensive understanding of core web development principles and the ability to apply them in a real-world context.
+
+The most significant achievement of this project is the construction of a fully functional custom MVC framework entirely from scratch using vanilla PHP. This includes a custom URL router that parses clean URLs and dispatches to controllers, a base controller class with model and view utility methods, a PDO-based database abstraction layer with prepared statements and automatic type detection, session management for authentication and cart persistence, and a consistent view rendering system using PHP's \code{extract()} function. All of this was built without any external dependencies, providing deep insight into how frameworks like Laravel and Symfony work internally.
+
+Beyond the framework itself, the platform includes a complete user authentication system with secure bcrypt password hashing, a browsable course catalog with responsive card grid layouts, a real-time AJAX live search with debouncing and XSS protection, a session-based shopping cart with full CRUD operations and duplicate enrollment prevention, a checkout and enrollment system with database persistence, a personalized "My Courses" dashboard for enrolled users, a contact form with comprehensive server-side validation, CSRF token protection, and client-side real-time feedback, Google Maps integration on course detail pages, and a cohesive, responsive design system using CSS custom properties, Google Fonts, Material Symbols icons, and modern CSS layout techniques.
+
+The platform demonstrates solid understanding of core web development principles including HTTP request/response handling, URL routing and dispatching, database design with referential integrity and proper indexing, session management and cookie security, input validation and output escaping for security, separation of concerns through the MVC architectural pattern, and progressive enhancement and graceful degradation in JavaScript.
+
+\section{System Limitations}
+
+Despite the completed features, the current implementation has several limitations that would need to be addressed before production deployment:
+
+\begin{itemize}
+    \item \textbf{No Admin Dashboard}: There is no administrative interface for creating, editing, or deleting courses, managing users, or viewing platform analytics. All data must be managed directly through phpMyAdmin or MySQL command-line tools.
+    
+    \item \textbf{No Payment Gateway Integration}: The checkout process enrolls users immediately without processing any actual payment. In a production environment, a payment processor such as VNPay or MoMo would need to be integrated to handle real financial transactions.
+    
+    \item \textbf{No Course Content Delivery}: Enrolled users are redirected to the course detail page, but there is no actual course content delivery system. A production platform would need video lessons, lesson structure, progress tracking, quizzes, and assignments.
+    
+    \item \textbf{No Email Notification System}: Users do not receive confirmation emails upon registration, enrollment, or checkout. Transactional emails would be critical for a production platform.
+    
+    \item \textbf{No Password Recovery}: There is no "Forgot Password" functionality, meaning users who forget their password cannot recover their accounts.
+    
+    \item \textbf{No Course Rating/Review System}: While the database stores a \code{rating} field, there is no interface for users to submit ratings or reviews. A crowdsourced rating system would improve course discoverability.
+    
+    \item \textbf{No Category Filtering in Catalog}: The sidebar category links are visual placeholders. All courses are displayed regardless of category selection. Full server-side filtering by category, price range, and rating would improve the catalog UX.
+\end{itemize}
+
+\section{Future Development}
+
+The following enhancements are proposed for future iterations of the EduStream platform, representing the natural next steps for a production-ready course marketplace:
+
+\begin{itemize}
+    \item \textbf{Admin Dashboard}: A full CRUD interface for administrators to manage courses, categories, locations, and users. Role-based access control would restrict this panel to admin users only. Enrollment statistics and revenue reports would provide business insights.
+    
+    \item \textbf{Payment Gateway Integration}: Integrate VNPay or MoMo payment APIs to process real payments. The enrollment record would only be created after receiving a successful payment confirmation from the payment provider, ensuring financial integrity.
+    
+    \item \textbf{Course Content System}: Implement a lesson-based content delivery system with video lessons, text content, downloadable resources, quizzes, and assignments. A progress tracker would show how much of a course a user has completed, with the ability to resume from where they left off.
+    
+    \item \textbf{Rating and Review System}: Allow enrolled users to rate and review courses they have purchased. The average rating would be recalculated in real-time and displayed on course cards and detail pages, helping other users make enrollment decisions.
+    
+    \item \textbf{Email Notifications}: Implement PHPMailer or the native \code{mail()} function to send transactional emails for registration confirmation, enrollment receipt, password reset, and contact form acknowledgment.
+    
+    \item \textbf{Password Recovery}: Implement a secure "Forgot Password" flow. When a user requests a password reset, the system generates a time-limited token (stored in the database or signed in the URL), sends it via email, and uses it to verify the user's identity when setting a new password.
+    
+    \item \textbf{User Profile Management}: Allow users to edit their profile information, upload a profile avatar, and view their enrollment history, total learning time, and completion statistics.
+    
+    \item \textbf{Wishlist Feature}: Allow users to save courses to a wishlist for future consideration, without the commitment of immediate enrollment.
+    
+    \item \textbf{Course Search and Filtering}: Implement server-side filtering on the course catalog page, allowing users to filter by category, price range, rating, and instructor. A sort option (by newest, cheapest, highest-rated) would also improve discoverability.
+    
+    \item \textbf{Certificate Generation}: Upon completing a course (defined as completing all lessons or scoring above a threshold on a final quiz), generate a downloadable PDF certificate of completion with the user's name, course title, instructor, and completion date.
+\end{itemize}
+
+% ==============================================================================
+%  REFERENCES
+% ==============================================================================
+\chapter{References}
+
+\begin{enumerate}
+    \item PHP Manual — \url{https://www.php.net/docs.php}
+    \item PDO (PHP Data Objects) — \url{https://www.php.net/manual/en/book.pdo.php}
+    \item MySQL Documentation — \url{https://dev.mysql.com/doc/}
+    \item Google Fonts — \url{https://fonts.google.com/}
+    \item Material Symbols — \url{https://fonts.google.com/specimens/Material+Symbols-Outlined}
+    \item OWASP Security Guidelines — \url{https://owasp.org/}
+    \item Fetch API — \url{https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API}
+    \item Hypertext Transfer Protocol (HTTP) — RFC 9110 — \url{https://www.rfc-editor.org/rfc/rfc9110}
+    \item Bcrypt Password Hashing — \url{https://www.php.net/manual/en/function.password-hash.php}
+    \item CSS Custom Properties — \url{https://developer.mozilla.org/en-US/docs/Web/CSS/--*}
+\end{enumerate}
+
+\end{document}

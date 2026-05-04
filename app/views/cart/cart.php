@@ -1,11 +1,10 @@
 <?php
-$pageTitle = 'Giỏ hàng - EduStream';
+$pageTitle = 'Shopping Cart - EduStream';
 $bodyClass = 'site-page cart-page';
 $navActive = 'courses';
 $stylesheets = ['/public/css/home.css', '/public/css/cart.css'];
 require __DIR__ . '/../includes/header.php';
 
-// Hiển thị thông báo
 $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['success'], $_SESSION['error']);
@@ -15,7 +14,7 @@ unset($_SESSION['success'], $_SESSION['error']);
     <div class="cart-container">
         <h1 class="cart-title">
             <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
-            Giỏ hàng của bạn
+            Your Shopping Cart
         </h1>
 
         <?php if ($success): ?>
@@ -35,11 +34,11 @@ unset($_SESSION['success'], $_SESSION['error']);
         <?php if (empty($courses)): ?>
         <div class="cart-empty">
             <span class="material-symbols-outlined cart-empty__icon" aria-hidden="true">shopping_cart</span>
-            <h2 class="cart-empty__title">Giỏ hàng trống</h2>
-            <p class="cart-empty__text">Bạn chưa thêm khóa học nào vào giỏ hàng.</p>
+            <h2 class="cart-empty__title">Your Cart is Empty</h2>
+            <p class="cart-empty__text">You haven't added any courses to your cart yet.</p>
             <a href="<?= htmlspecialchars(BASE_URL) ?>/courses" class="cart-empty__btn">
                 <span class="material-symbols-outlined" aria-hidden="true">school</span>
-                Khám phá khóa học
+                Explore Courses
             </a>
         </div>
         <?php else: ?>
@@ -66,7 +65,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                     </div>
                     <form method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/courses/removeFromCart" class="cart-item__remove">
                         <input type="hidden" name="course_id" value="<?= (int) $course['course_id'] ?>">
-                        <button type="submit" class="cart-item__remove-btn" title="Xóa khỏi giỏ hàng">
+                        <button type="submit" class="cart-item__remove-btn" title="Remove from cart">
                             <span class="material-symbols-outlined" aria-hidden="true">delete</span>
                         </button>
                     </form>
@@ -76,24 +75,24 @@ unset($_SESSION['success'], $_SESSION['error']);
 
             <div class="cart-summary">
                 <div class="cart-summary__card">
-                    <h2 class="cart-summary__title">Tóm tắt đơn hàng</h2>
+                    <h2 class="cart-summary__title">Order Summary</h2>
                     <div class="cart-summary__row">
-                        <span>Số khóa học:</span>
-                        <span><?= $count ?> khóa</span>
+                        <span>Number of courses:</span>
+                        <span><?= $count ?></span>
                     </div>
                     <div class="cart-summary__row cart-summary__row--total">
-                        <span>Tổng cộng:</span>
+                        <span>Total:</span>
                         <span>$<?= number_format($total, 2) ?></span>
                     </div>
                     <form method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/courses/checkout">
                         <button type="submit" class="cart-summary__checkout-btn">
                             <span class="material-symbols-outlined" aria-hidden="true">credit_card</span>
-                            Thanh toán & Đăng ký
+                            Checkout & Enroll
                         </button>
                     </form>
                     <p class="cart-summary__note">
                         <span class="material-symbols-outlined" aria-hidden="true">info</span>
-                        Sau khi thanh toán, bạn sẽ được ghi danh vào tất cả khóa học trong giỏ.
+                        After checkout, you will be enrolled in all courses in your cart.
                     </p>
                 </div>
             </div>
