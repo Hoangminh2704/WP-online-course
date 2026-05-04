@@ -16,6 +16,7 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="online courses, e-learning, education, programming, design" />
     <title><?= htmlspecialchars($pageTitle) ?></title>
 
     <link

@@ -4,28 +4,11 @@ class CoursesController extends Controller {
     
     public function index() {
         $courseModel = $this->model('CourseModel');
-        $categoryId = isset($_GET['category']) ? (int) $_GET['category'] : 0;
         $categories = $courseModel->getCategories();
-        $activeCategory = null;
-
-        if ($categoryId > 0) {
-            foreach ($categories as $category) {
-                if ((int) $category['category_id'] === $categoryId) {
-                    $activeCategory = $category;
-                    break;
-                }
-            }
-        }
-
-        if ($activeCategory) {
-            $courses = $courseModel->getCoursesByCategoryId($categoryId);
-        } else {
-            $categoryId = 0;
-            $courses = $courseModel->getAllCourses();
-        }
-
-        $activeCategoryName = $activeCategory ? $activeCategory['category_name'] : 'All Courses';
-        $pageTitle = ($activeCategory ? $activeCategory['category_name'] . ' Courses' : 'Course Catalog') . ' - EduStream';
+        $courses = $courseModel->getAllCourses();
+        $categoryId = 0;
+        $activeCategoryName = 'All Courses';
+        $pageTitle = 'Course Catalog - EduStream';
 
         $data = [
             'title' => $pageTitle,
@@ -33,6 +16,35 @@ class CoursesController extends Controller {
             'categories' => $categories,
             'active_category_id' => $categoryId,
             'active_category_name' => $activeCategoryName
+        ];
+
+        $this->view('catalog/catalog', $data);
+    }
+
+    public function category($slug = '') {
+        if (empty($slug)) {
+            header('Location: ' . BASE_URL . '/courses');
+            exit;
+        }
+
+        $courseModel = $this->model('CourseModel');
+        $categories = $courseModel->getCategories();
+        $activeCategory = $courseModel->getCategoryBySlug($slug);
+
+        if (!$activeCategory) {
+            header('Location: ' . BASE_URL . '/courses');
+            exit;
+        }
+
+        $courses = $courseModel->getCoursesByCategoryId($activeCategory['category_id']);
+        $pageTitle = $activeCategory['category_name'] . ' Courses - EduStream';
+
+        $data = [
+            'title' => $pageTitle,
+            'courses' => $courses,
+            'categories' => $categories,
+            'active_category_id' => (int) $activeCategory['category_id'],
+            'active_category_name' => $activeCategory['category_name']
         ];
 
         $this->view('catalog/catalog', $data);

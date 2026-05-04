@@ -31,9 +31,15 @@ require __DIR__ . '/../includes/header.php';
                     <span>All Courses</span>
                 </a>
                 <?php foreach ($categories as $category): ?>
-                    <?php $isActive = (int) $category['category_id'] === (int) $activeCategoryId; ?>
+                    <?php
+                        $isActive = (int) $category['category_id'] === (int) $activeCategoryId;
+                        $categorySlug = $category['slug'] ?? '';
+                        $categoryHref = $categorySlug
+                            ? (BASE_URL . '/courses/category/' . rawurlencode($categorySlug))
+                            : (BASE_URL . '/courses?category=' . urlencode((string) $category['category_id']));
+                    ?>
                     <a class="catalog-sidebar__link<?= $isActive ? ' catalog-sidebar__link--active' : '' ?>"
-                        href="<?= htmlspecialchars(BASE_URL) ?>/courses?category=<?= urlencode((string) $category['category_id']) ?>">
+                        href="<?= htmlspecialchars($categoryHref) ?>">
                         <span class="material-symbols-outlined" aria-hidden="true">category</span>
                         <span><?= htmlspecialchars($category['category_name']) ?></span>
                     </a>

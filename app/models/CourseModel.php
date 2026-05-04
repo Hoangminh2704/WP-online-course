@@ -21,6 +21,12 @@ class CourseModel {
         $this->db->query("SELECT category_id, category_name, slug, description FROM categories ORDER BY category_name ASC");
         return $this->db->resultSet();
     }
+
+    public function getCategoryBySlug($slug) {
+        $this->db->query("SELECT category_id, category_name, slug, description FROM categories WHERE slug = ? LIMIT 1");
+        $this->db->bind(1, (string) $slug, PDO::PARAM_STR);
+        return $this->db->single();
+    }
     // slug SEO
     public function getCourseBySlug($slug) {
         $sql = "SELECT c.*,
