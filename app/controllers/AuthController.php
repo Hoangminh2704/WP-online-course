@@ -28,7 +28,6 @@ class AuthController extends Controller {
 
             $data['old']['email'] = $email;
 
-            // Validate
             if (empty($email)) {
                 $data['errors']['email'] = 'Email is required.';
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -44,7 +43,6 @@ class AuthController extends Controller {
                 $user = $userModel->findByEmail($email);
 
                 if ($user && password_verify($password, $user['password_hash'])) {
-                    // Login successful
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['user_name'] = $user['full_name'];
                     $_SESSION['user_email'] = $user['email'];
@@ -68,7 +66,6 @@ class AuthController extends Controller {
 
     public function register() {
         $this->redirectIfLoggedIn();
-
         $data = [
             'title' => 'Register',
             'errors' => [],
@@ -87,7 +84,6 @@ class AuthController extends Controller {
             $data['old']['full_name'] = $fullName;
             $data['old']['email'] = $email;
 
-            // Validate
             if (empty($fullName)) {
                 $data['errors']['full_name'] = 'Full name is required.';
             } elseif (strlen($fullName) < 2) {
@@ -119,7 +115,6 @@ class AuthController extends Controller {
                 $userModel = $this->model('UserModel');
                 $userModel->create($fullName, $email, $password);
 
-                // Auto-login after registration
                 $_SESSION['user_id'] = $userModel->findByEmail($email)['user_id'];
                 $_SESSION['user_name'] = $fullName;
                 $_SESSION['user_email'] = $email;
@@ -135,15 +130,12 @@ class AuthController extends Controller {
     }
 
     public function logout() {
-        // Unset all session variables
         $_SESSION = [];
 
-        // Destroy the session
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
 
-        // Redirect to home page
         header('Location: ' . BASE_URL . '/');
         exit;
     }

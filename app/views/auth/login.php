@@ -76,7 +76,7 @@ $pageTitle = $data['title'] ?? 'Login';
             </p>
         </div>
 
-        <div class="auth-demo">
+        <!-- <div class="auth-demo">
             <p class="auth-demo__title">Demo Accounts</p>
             <div class="auth-demo__accounts">
                 <div class="auth-demo__account">
@@ -86,7 +86,7 @@ $pageTitle = $data['title'] ?? 'Login';
                     <strong>Admin:</strong> admin@edustream.test / Admin123!
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </main>
 

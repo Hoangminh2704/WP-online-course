@@ -10,6 +10,17 @@ class CourseModel {
         $this->db->query("SELECT * FROM courses ORDER BY course_id DESC");
         return $this->db->resultSet();
     }
+
+    public function getCoursesByCategoryId($categoryId) {
+        $this->db->query("SELECT * FROM courses WHERE category_id = ? ORDER BY course_id DESC");
+        $this->db->bind(1, (int) $categoryId, PDO::PARAM_INT);
+        return $this->db->resultSet();
+    }
+
+    public function getCategories() {
+        $this->db->query("SELECT category_id, category_name, slug, description FROM categories ORDER BY category_name ASC");
+        return $this->db->resultSet();
+    }
     // slug SEO
     public function getCourseBySlug($slug) {
         $sql = "SELECT c.*,

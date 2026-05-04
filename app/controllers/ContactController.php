@@ -25,10 +25,7 @@ class ContactController extends Controller {
             $data['old']['subject'] = $subject;
             $data['old']['message'] = $message;
 
-            // ============================================
-            // SERVER-SIDE VALIDATION
-            // ============================================
-
+           
             // Name validation
             if (empty($name)) {
                 $data['errors']['name'] = 'Name is required.';
@@ -67,19 +64,9 @@ class ContactController extends Controller {
                 $data['errors']['message'] = 'Message cannot exceed 5000 characters.';
             }
 
-            // CSRF Token validation (optional but recommended)
-            if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
-                $data['errors']['general'] = 'Invalid request. Please try again.';
-            }
+            
 
-            // If no errors, process the contact form
             if (empty($data['errors'])) {
-                // Here you would typically:
-                // 1. Save to database
-                // 2. Send email
-                // 3. Or any other processing
-
-                // For demo, we'll just show success
                 $data['success'] = true;
                 $data['old'] = [
                     'name' => '',
@@ -88,12 +75,10 @@ class ContactController extends Controller {
                     'message' => ''
                 ];
 
-                // Regenerate CSRF token
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             }
         }
 
-        // Generate CSRF token
         if (!isset($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }

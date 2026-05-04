@@ -1,8 +1,12 @@
 <?php
-$pageTitle = 'Programming Courses — EduStream';
+$pageTitle = $data['title'] ?? 'Course Catalog — EduStream';
 $bodyClass = 'site-page catalog-page';
 $navActive = 'courses';
 $stylesheets = ['/public/css/home.css', '/public/css/catalog.css'];
+$categories = $data['categories'] ?? [];
+$activeCategoryId = $data['active_category_id'] ?? 0;
+$activeCategoryName = $data['active_category_name'] ?? 'All Courses';
+$courses = $data['courses'] ?? [];
 require __DIR__ . '/../includes/header.php';
 ?>
 
@@ -12,7 +16,7 @@ require __DIR__ . '/../includes/header.php';
         <span class="material-symbols-outlined catalog-breadcrumb__sep" aria-hidden="true">chevron_right</span>
         <a href="<?= htmlspecialchars(BASE_URL) ?>/courses">Courses</a>
         <span class="material-symbols-outlined catalog-breadcrumb__sep" aria-hidden="true">chevron_right</span>
-        <span class="catalog-breadcrumb__current">Programming</span>
+        <span class="catalog-breadcrumb__current"><?= htmlspecialchars($activeCategoryName) ?></span>
     </nav>
 
     <div class="catalog-layout">
@@ -22,30 +26,18 @@ require __DIR__ . '/../includes/header.php';
                 <p class="catalog-sidebar__sub">Explore by topic</p>
             </div>
             <nav class="catalog-sidebar__nav">
-                <a class="catalog-sidebar__link catalog-sidebar__link--active" href="<?= htmlspecialchars(BASE_URL) ?>/courses">
+                <a class="catalog-sidebar__link<?= $activeCategoryId === 0 ? ' catalog-sidebar__link--active' : '' ?>" href="<?= htmlspecialchars(BASE_URL) ?>/courses">
                     <span class="material-symbols-outlined" aria-hidden="true">code</span>
-                    <span>Development</span>
+                    <span>All Courses</span>
                 </a>
-                <a class="catalog-sidebar__link" href="#">
-                    <span class="material-symbols-outlined" aria-hidden="true">payments</span>
-                    <span>Business</span>
-                </a>
-                <a class="catalog-sidebar__link" href="#">
-                    <span class="material-symbols-outlined" aria-hidden="true">palette</span>
-                    <span>Design</span>
-                </a>
-                <a class="catalog-sidebar__link" href="#">
-                    <span class="material-symbols-outlined" aria-hidden="true">campaign</span>
-                    <span>Marketing</span>
-                </a>
-                <a class="catalog-sidebar__link" href="#">
-                    <span class="material-symbols-outlined" aria-hidden="true">monitor_heart</span>
-                    <span>Health</span>
-                </a>
-                <a class="catalog-sidebar__link" href="#">
-                    <span class="material-symbols-outlined" aria-hidden="true">self_improvement</span>
-                    <span>Personal Development</span>
-                </a>
+                <?php foreach ($categories as $category): ?>
+                    <?php $isActive = (int) $category['category_id'] === (int) $activeCategoryId; ?>
+                    <a class="catalog-sidebar__link<?= $isActive ? ' catalog-sidebar__link--active' : '' ?>"
+                        href="<?= htmlspecialchars(BASE_URL) ?>/courses?category=<?= urlencode((string) $category['category_id']) ?>">
+                        <span class="material-symbols-outlined" aria-hidden="true">category</span>
+                        <span><?= htmlspecialchars($category['category_name']) ?></span>
+                    </a>
+                <?php endforeach; ?>
             </nav>
             <div class="catalog-sidebar__cta">
                 <button type="button" class="catalog-sidebar__cta-btn">Request Subject</button>
@@ -59,7 +51,7 @@ require __DIR__ . '/../includes/header.php';
         <div class="catalog-content">
             <div class="catalog-toolbar">
                 <div class="catalog-toolbar__titles">
-                    <h1>Programming Courses</h1>
+                    <h1><?= htmlspecialchars($activeCategoryName) ?></h1>
                     <p class="catalog-toolbar__meta">Showing <?= count($courses ?? []) ?> courses</p>
                 </div>
                 <div class="catalog-toolbar__sort">

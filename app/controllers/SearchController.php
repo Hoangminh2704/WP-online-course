@@ -1,9 +1,6 @@
 <?php
 class SearchController extends Controller {
-    /**
-     * AJAX endpoint: /search/suggest?q=keyword
-     * Returns JSON array of matching courses
-     */
+    
     public function suggest() {
         header('Content-Type: application/json');
 

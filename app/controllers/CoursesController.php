@@ -4,11 +4,35 @@ class CoursesController extends Controller {
     
     public function index() {
         $courseModel = $this->model('CourseModel');
-        $courses = $courseModel->getAllCourses();
+        $categoryId = isset($_GET['category']) ? (int) $_GET['category'] : 0;
+        $categories = $courseModel->getCategories();
+        $activeCategory = null;
+
+        if ($categoryId > 0) {
+            foreach ($categories as $category) {
+                if ((int) $category['category_id'] === $categoryId) {
+                    $activeCategory = $category;
+                    break;
+                }
+            }
+        }
+
+        if ($activeCategory) {
+            $courses = $courseModel->getCoursesByCategoryId($categoryId);
+        } else {
+            $categoryId = 0;
+            $courses = $courseModel->getAllCourses();
+        }
+
+        $activeCategoryName = $activeCategory ? $activeCategory['category_name'] : 'All Courses';
+        $pageTitle = ($activeCategory ? $activeCategory['category_name'] . ' Courses' : 'Course Catalog') . ' - EduStream';
 
         $data = [
-            'title' => 'Course Catalog - EduStream',
-            'courses' => $courses
+            'title' => $pageTitle,
+            'courses' => $courses,
+            'categories' => $categories,
+            'active_category_id' => $categoryId,
+            'active_category_name' => $activeCategoryName
         ];
 
         $this->view('catalog/catalog', $data);
