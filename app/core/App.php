@@ -1,13 +1,13 @@
 <?php
 class App {
-    protected $controller = 'HomeController'; // Controller mặc định
-    protected $method = 'index';            // Hàm mặc định
-    protected $params = [];                 // Tham số
+    protected $controller = 'HomeController'; // Default controller
+    protected $method = 'index';              // Default method
+    protected $params = [];                  // URL parameters
 
     public function __construct() {
         $url = $this->parseUrl();
 
-        // 1. Tìm Controller
+        // 1. Find Controller
         if (isset($url[0]) && file_exists('app/controllers/' . ucfirst($url[0]) . 'Controller.php')) {
             $this->controller = ucfirst($url[0]) . 'Controller';
             unset($url[0]);
@@ -15,7 +15,7 @@ class App {
         require_once 'app/controllers/' . $this->controller . '.php';
         $this->controller = new $this->controller;
 
-        // 2. Tìm Hàm (Method)
+        // 2. Find Method
         if (isset($url[1])) {
             if (method_exists($this->controller, $url[1])) {
                 $this->method = $url[1];
@@ -23,10 +23,10 @@ class App {
             }
         }
 
-        // 3. Lấy Tham số (Params)
+        // 3. Extract Parameters
         $this->params = $url ? array_values($url) : [];
 
-        // 4. Chạy Controller -> Hàm(Tham số)
+        // 4. Dispatch: Controller -> Method(Parameters)
         call_user_func_array([$this->controller, $this->method], $this->params);
     }
 

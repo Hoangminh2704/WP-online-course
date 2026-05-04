@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Bootstrap lõi ứng dụng.
- * Nạp các class cần thiết trước khi khởi tạo App.
+ * Application bootstrap.
+ * Loads required classes before initializing App.
  */
 
-/** Đường dẫn gốc ứng dụng trên web server (vd: '' hoặc '/WebProgramming-online_course') — dùng cho link CSS/ảnh và route */
+/** Root URL path on the web server (e.g. '' or '/WebProgramming-online_course') — used for CSS/image links and routing */
 if (!defined('BASE_URL')) {
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? '/index.php';
     $basePath = str_replace('\\', '/', dirname($scriptName));

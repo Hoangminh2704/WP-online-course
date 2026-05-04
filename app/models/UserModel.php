@@ -6,27 +6,20 @@ class UserModel {
         $this->db = new Database();
     }
 
-    /**
-     * Tìm user theo email
-     */
+    
     public function findByEmail($email) {
         $this->db->query("SELECT * FROM users WHERE email = ?");
         $this->db->bind(1, $email);
         return $this->db->single();
     }
 
-    /**
-     * Tìm user theo ID
-     */
+    
     public function findById($id) {
         $this->db->query("SELECT user_id, full_name, email, role, created_at FROM users WHERE user_id = ?");
         $this->db->bind(1, (int) $id, PDO::PARAM_INT);
         return $this->db->single();
     }
 
-    /**
-     * Tạo user mới
-     */
     public function create($fullName, $email, $password) {
         $hash = password_hash($password, PASSWORD_BCRYPT);
         $this->db->query(
@@ -38,18 +31,13 @@ class UserModel {
         return $this->db->execute();
     }
 
-    /**
-     * Verify password
-     */
     public function verifyPassword($email, $password) {
         $user = $this->findByEmail($email);
         if (!$user) return false;
         return password_verify($password, $user['password_hash']);
     }
 
-    /**
-     * Kiểm tra email đã tồn tại chưa
-     */
+
     public function emailExists($email) {
         $this->db->query("SELECT user_id FROM users WHERE email = ?");
         $this->db->bind(1, $email);

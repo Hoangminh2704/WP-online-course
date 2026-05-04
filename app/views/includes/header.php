@@ -1,10 +1,10 @@
 <?php
 /**
- * Khởi tạo biến (có thể ghi đè trước khi require):
- * - $pageTitle  string   Tiêu đề trang
- * - $bodyClass  string   Class trên <body> (vd: home-page, site-page)
- * - $navActive  string   home | courses | contact — highlight menu
- * - $stylesheets array   Danh sách đường dẫn CSS sau BASE_URL (vd: ['/public/css/home.css'])
+ * Page variables (can be overridden before requiring this file):
+ * - $pageTitle  string   Page title
+ * - $bodyClass  string   CSS class on <body> (e.g. home-page, site-page)
+ * - $navActive  string   home | courses | contact — active menu highlight
+ * - $stylesheets array   CSS file paths relative to BASE_URL (e.g. ['/public/css/home.css'])
  */
 $pageTitle = $pageTitle ?? (isset($data['title']) ? (string) $data['title'] : 'EduStream');
 $bodyClass = $bodyClass ?? 'site-page';
@@ -20,7 +20,7 @@ $userRole = $_SESSION['user_role'] ?? '';
 $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 ?>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -37,7 +37,7 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 </head>
 <body class="<?= htmlspecialchars($bodyClass) ?>">
 
-    <nav class="home-nav" aria-label="Điều hướng chính">
+    <nav class="home-nav" aria-label="Main Navigation">
         <div class="home-nav__inner">
             <a class="home-nav__brand" href="<?= htmlspecialchars(BASE_URL) ?>/">EduStream</a>
             <div class="home-nav__menu">
@@ -84,7 +84,7 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
                                 </a>
                             </div>
                         </div>
-                        <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/cart" class="home-nav__cart-btn" aria-label="Giỏ hàng">
+                        <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/cart" class="home-nav__cart-btn" aria-label="Shopping Cart">
                             <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
                             <?php if ($cartCount > 0): ?>
                             <span class="home-nav__cart-badge"><?= $cartCount ?></span>
@@ -92,7 +92,7 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
                         </a>
                     </div>
                 <?php else: ?>
-                    <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/cart" class="home-nav__cart-btn" aria-label="Giỏ hàng">
+                        <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/cart" class="home-nav__cart-btn" aria-label="Shopping Cart">
                         <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
                         <?php if ($cartCount > 0): ?>
                         <span class="home-nav__cart-badge"><?= $cartCount ?></span>

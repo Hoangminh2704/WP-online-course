@@ -6,9 +6,7 @@ class EnrollmentModel {
         $this->db = new Database();
     }
 
-    /**
-     * Kiểm tra user đã đăng ký khóa học chưa
-     */
+    
     public function isEnrolled($userId, $courseId) {
         $this->db->query("SELECT enrollment_id FROM enrollments WHERE user_id = ? AND course_id = ?");
         $this->db->bind(1, (int) $userId, PDO::PARAM_INT);
@@ -16,9 +14,7 @@ class EnrollmentModel {
         return $this->db->single() !== false;
     }
 
-    /**
-     * Đăng ký khóa học (enroll)
-     */
+    
     public function enroll($userId, $courseId) {
         $this->db->query(
             "INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)"
@@ -28,9 +24,7 @@ class EnrollmentModel {
         return $this->db->execute();
     }
 
-    /**
-     * Lấy danh sách khóa học đã đăng ký của user
-     */
+    
     public function getEnrollmentsByUser($userId) {
         $this->db->query("
             SELECT e.enrolled_at, c.course_id, c.title, c.slug, c.image_url, c.price, c.instructor, c.rating
@@ -44,7 +38,7 @@ class EnrollmentModel {
     }
 
     /**
-     * Lấy danh sách course_id đã enroll (chỉ IDs)
+     * Get list of enrolled course IDs (IDs only)
      */
     public function getEnrolledCourseIds($userId) {
         $this->db->query("SELECT course_id FROM enrollments WHERE user_id = ?");

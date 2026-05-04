@@ -2,7 +2,7 @@
 class SearchController extends Controller {
     /**
      * AJAX endpoint: /search/suggest?q=keyword
-     * Trả về JSON array các courses matching
+     * Returns JSON array of matching courses
      */
     public function suggest() {
         header('Content-Type: application/json');

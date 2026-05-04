@@ -2,7 +2,7 @@
 $pageTitle = $data['title'] ?? 'Register';
 ?>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -144,7 +144,7 @@ $pageTitle = $data['title'] ?? 'Register';
     }
 
     function validateName(name) {
-        // Chỉ cho phép chữ cái (có dấu tiếng Việt) và khoảng trắng
+        // Allow letters (including accented characters) and spaces
         var re = /^[a-zA-ZÀ-ỹ\s]+$/;
         return re.test(name);
     }

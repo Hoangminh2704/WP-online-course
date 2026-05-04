@@ -1,9 +1,7 @@
 <?php
 class CoursesController extends Controller {
 
-    /**
-     * Trang danh sách khóa học
-     */
+    
     public function index() {
         $courseModel = $this->model('CourseModel');
         $courses = $courseModel->getAllCourses();
@@ -16,9 +14,6 @@ class CoursesController extends Controller {
         $this->view('catalog/catalog', $data);
     }
 
-    /**
-     * Chi tiết khóa học
-     */
     public function detail($slug = '') {
         if (empty($slug)) {
             header('Location: ' . BASE_URL . '/courses');
@@ -33,7 +28,6 @@ class CoursesController extends Controller {
             die("Course not found!");
         }
 
-        // Lấy trạng thái enrollment và cart
         $enrolledCourseIds = [];
         $cartCourseIds = [];
 
@@ -56,11 +50,7 @@ class CoursesController extends Controller {
         $this->view('course_detail/course_detail', $data);
     }
 
-    /**
-     * Đăng ký khóa học ngay (Enroll Now)
-     */
     public function enroll() {
-        // Yêu cầu đăng nhập
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['redirect_after_login'] = $_SERVER['HTTP_REFERER'] ?? BASE_URL . '/courses';
             header('Location: ' . BASE_URL . '/auth/login');
@@ -112,9 +102,6 @@ class CoursesController extends Controller {
         }
     }
 
-    /**
-     * Thêm vào giỏ hàng (Add to Cart)
-     */
     public function addToCart() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '/courses');
@@ -159,9 +146,6 @@ class CoursesController extends Controller {
         exit;
     }
 
-    /**
-     * Trang giỏ hàng
-     */
     public function cart() {
         $cartModel = $this->model('CartModel');
         $courses = $cartModel->getCartWithDetails();
@@ -181,9 +165,6 @@ class CoursesController extends Controller {
         $this->view('cart/cart', $data);
     }
 
-    /**
-     * Xóa khóa học khỏi giỏ hàng
-     */
     public function removeFromCart() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '/courses/cart');
@@ -202,9 +183,6 @@ class CoursesController extends Controller {
         exit;
     }
 
-    /**
-     * Checkout - Enroll in all courses in the cart
-     */
     public function checkout() {
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['redirect_after_login'] = BASE_URL . '/courses/cart';

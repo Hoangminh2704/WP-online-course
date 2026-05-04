@@ -4,7 +4,7 @@ class Database {
     private $user = 'root';
     private $pass = 'root';
     private $dbname = 'online_course_platform';
-    private $port = '8889'; // Cổng MAMP của bạn
+    private $port = '8889'; 
     
     private $dbh;
     private $stmt;
@@ -17,21 +17,19 @@ class Database {
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
             ));
         } catch (PDOException $e) {
-            die("Lỗi kết nối CSDL: " . $e->getMessage());
+            die("Database connection error: " . $e->getMessage());
         }
     }
 
-    // Hàm chuẩn bị câu lệnh SQL
     public function query($sql) {
         $this->stmt = $this->dbh->prepare($sql);
     }
 
-    // Hàm gán giá trị (Đã được nâng cấp để tự nhận diện kiểu dữ liệu)
     public function bind($param, $value, $type = null) {
         if (is_null($type)) {
             switch (true) {
                 case is_int($value):
-                    $type = PDO::PARAM_INT; // Nếu là số nguyên, bind kiểu INT (giải quyết lỗi LIMIT)
+                    $type = PDO::PARAM_INT; 
                     break;
                 case is_bool($value):
                     $type = PDO::PARAM_BOOL;
@@ -40,24 +38,21 @@ class Database {
                     $type = PDO::PARAM_NULL;
                     break;
                 default:
-                    $type = PDO::PARAM_STR; // Mặc định là chuỗi
+                    $type = PDO::PARAM_STR; 
             }
         }
         $this->stmt->bindValue($param, $value, $type);
     }
 
-    // Hàm thực thi
     public function execute() {
         return $this->stmt->execute();
     }
 
-    // Hàm lấy nhiều dòng dữ liệu (SELECT)
     public function resultSet() {
         $this->execute();
         return $this->stmt->fetchAll();
     }
 
-    // Hàm lấy 1 dòng dữ liệu (SELECT single row)
     public function single() {
         $this->execute();
         return $this->stmt->fetch();

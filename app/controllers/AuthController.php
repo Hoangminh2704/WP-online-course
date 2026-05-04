@@ -44,7 +44,7 @@ class AuthController extends Controller {
                 $user = $userModel->findByEmail($email);
 
                 if ($user && password_verify($password, $user['password_hash'])) {
-                    // Login thành công
+                    // Login successful
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['user_name'] = $user['full_name'];
                     $_SESSION['user_email'] = $user['email'];
@@ -119,7 +119,7 @@ class AuthController extends Controller {
                 $userModel = $this->model('UserModel');
                 $userModel->create($fullName, $email, $password);
 
-                // Auto login sau khi đăng ký
+                // Auto-login after registration
                 $_SESSION['user_id'] = $userModel->findByEmail($email)['user_id'];
                 $_SESSION['user_name'] = $fullName;
                 $_SESSION['user_email'] = $email;

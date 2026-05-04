@@ -6,10 +6,7 @@ class SearchModel {
         $this->db = new Database();
     }
 
-    /**
-     * Tìm kiếm courses theo title hoặc instructor
-     * Giới hạn 8 kết quả để dropdown không quá dài
-     */
+    
     public function searchCourses($keyword, $limit = 8) {
         $sql = "SELECT c.course_id, c.title, c.slug, c.price, c.instructor, c.image_url
                 FROM courses c
@@ -25,7 +22,7 @@ class SearchModel {
 
         $rows = $this->db->resultSet();
 
-        // Format kết quả cho JS
+        // Format
         $results = [];
         foreach ($rows as $row) {
             $results[] = [

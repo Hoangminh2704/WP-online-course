@@ -1,9 +1,7 @@
 <?php
 class UserController extends Controller {
 
-    /**
-     * Kiểm tra đăng nhập
-     */
+    
     private function requireLogin() {
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['redirect_after_login'] = BASE_URL . '/user/my-courses';
@@ -12,9 +10,7 @@ class UserController extends Controller {
         }
     }
 
-    /**
-     * Trang "Khóa học của tôi"
-     */
+    
     public function myCourses() {
         $this->requireLogin();
 
@@ -31,17 +27,13 @@ class UserController extends Controller {
         $this->view('user/my-courses', $data);
     }
 
-    /**
-     * Trang chủ user - redirect đến myCourses
-     */
+    
     public function index() {
         header('Location: ' . BASE_URL . '/user/myCourses');
         exit;
     }
 
-    /**
-     * Trang thông tin cá nhân
-     */
+    
     public function profile() {
         $this->requireLogin();
 

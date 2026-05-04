@@ -5,7 +5,7 @@ $navActive = 'courses';
 $stylesheets = ['/public/css/home.css', '/public/css/course_detail.css'];
 require __DIR__ . '/../includes/header.php';
 
-// Hiển thị thông báo
+// Display flash notifications
 $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
 $warning = $_SESSION['warning'] ?? null;
@@ -101,11 +101,11 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['warning']);
                 <?php if ($is_enrolled): ?>
                 <div class="cd-enrolled-badge">
                     <span class="material-symbols-outlined" aria-hidden="true">verified</span>
-                    Bạn đã sở hữu khóa học này
+                    You own this course
                 </div>
                 <a href="<?= htmlspecialchars(BASE_URL) ?>/user/my-courses" class="cd-btn cd-btn--primary cd-btn--full">
                     <span class="material-symbols-outlined" aria-hidden="true">play_circle</span>
-                    Học ngay
+                    Start Learning
                 </a>
                 <?php elseif ($is_logged_in): ?>
                 <div class="cd-purchase__actions">
@@ -120,7 +120,7 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['warning']);
                     <?php if ($is_in_cart): ?>
                     <a href="<?= htmlspecialchars(BASE_URL) ?>/courses/cart" class="cd-btn cd-btn--outline cd-btn--full">
                         <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
-                        Xem giỏ hàng
+                        View Cart
                     </a>
                     <?php else: ?>
                     <form method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/courses/addToCart">
@@ -136,7 +136,7 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['warning']);
                 <div class="cd-purchase__actions">
                     <a href="<?= htmlspecialchars(BASE_URL) ?>/auth/login" class="cd-btn cd-btn--primary cd-btn--full">
                         <span class="material-symbols-outlined" aria-hidden="true">login</span>
-                        Đăng nhập để đăng ký
+                        Login to Enroll
                     </a>
                     <?php if (!$is_in_cart): ?>
                     <form method="POST" action="<?= htmlspecialchars(BASE_URL) ?>/courses/addToCart">
